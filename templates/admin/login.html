@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - KEEM Driving School</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        }
+        
+        .login-box {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <div class="inline-block bg-white rounded-full p-4 mb-4">
+                <i class="fas fa-car text-red-600 text-5xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold text-white mb-2">KEEM Admin</h1>
+            <p class="text-gray-300">Login to your dashboard</p>
+        </div>
+        
+        <!-- Login Form -->
+        <div class="bg-white rounded-2xl p-8 login-box">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Sign In</h2>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-4 p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-800{% else %}bg-green-100 text-green-800{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" action="/admin/login">
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-envelope mr-2 text-red-600"></i>Email Address
+                    </label>
+                    <input type="email" name="email" required 
+                           class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-600 focus:outline-none transition"
+                           placeholder="admin@keemdrivingschool.com">
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        <i class="fas fa-lock mr-2 text-red-600"></i>Password
+                    </label>
+                    <div class="relative">
+                        <input type="password" name="password" id="password" required 
+                               class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-600 focus:outline-none transition"
+                               placeholder="••••••••">
+                        <button type="button" onclick="togglePassword()" 
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between mb-6">
+                    <label class="flex items-center">
+                        <input type="checkbox" class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    </label>
+                    <a href="#" class="text-sm text-red-600 hover:text-red-700 font-semibold">
+                        Forgot Password?
+                    </a>
+                </div>
+                
+                <button type="submit" 
+                        class="w-full gradient-bg text-white py-3 rounded-lg font-bold text-lg hover:opacity-90 transition">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login
+                </button>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <a href="/" class="text-gray-600 hover:text-gray-800 text-sm">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Website
+                </a>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="text-center mt-8 text-white text-sm">
+            <p>&copy; 2024 KEEM Driving School. All rights reserved.</p>
+        </div>
+    </div>
+    
+    <script>
+        function togglePassword() {
+            const password = document.getElementById('password');
+            const icon = document.getElementById('toggleIcon');
+            
+            if (password.type === 'password') {
+                password.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                password.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,478 @@
+# KEEM Driving School - Quick Start Guide
+
+## 🎯 Overview
+This guide will help you set up the KEEM Driving School Management System from scratch on cPanel hosting.
+
+---
+
+## 📦 Files You Need to Create
+
+### 1. Core Application Files
+```
+app.py                  - Main Flask application
+database.sql            - Database schema
+passenger_wsgi.py       - WSGI entry point
+.htaccess              - Apache configuration
+requirements.txt        - Python dependencies
+```
+
+### 2. Utility Modules (utils/)
+```
+utils/__init__.py
+utils/email_sender.py
+utils/whatsapp_sender.py
+utils/pdf_generator.py
+utils/excel_exporter.py
+```
+
+### 3. Templates (templates/)
+```
+templates/base.html
+templates/index.html
+templates/about.html
+templates/courses.html
+templates/branches.html
+templates/contact.html
+templates/apply.html
+templates/application_status.html
+
+templates/admin/base_admin.html
+templates/admin/login.html
+templates/admin/dashboard.html
+templates/admin/applications.html
+templates/admin/view_application.html
+templates/admin/settings.html
+
+templates/errors/404.html
+templates/errors/500.html
+```
+
+### 4. Static Files (static/)
+```
+static/css/custom.css
+static/js/main.js
+static/images/       (create folder)
+static/uploads/      (create folder)
+```
+
+---
+
+## 🚀 Step-by-Step Setup
+
+### STEP 1: Create Project Structure Locally
+
+```bash
+# Create main directory
+mkdir keem_driving_school
+cd keem_driving_school
+
+# Create subdirectories
+mkdir -p utils
+mkdir -p templates/admin
+mkdir -p templates/errors
+mkdir -p static/css
+mkdir -p static/js
+mkdir -p static/images
+mkdir -p static/uploads
+mkdir -p exports/pdfs
+mkdir -p exports/excel
+```
+
+### STEP 2: Create All Required Files
+
+Copy the code from the artifacts I provided into these files:
+
+1. **app.py** - Main application code
+2. **database.sql** - Database schema
+3. **requirements.txt** - Dependencies list
+4. **passenger_wsgi.py** - WSGI entry
+5. **.htaccess** - Apache config
+
+Utils files:
+- **utils/__init__.py** (empty file)
+- **utils/email_sender.py**
+- **utils/whatsapp_sender.py**
+- **utils/pdf_generator.py**
+- **utils/excel_exporter.py**
+
+Templates:
+- All template files from the artifacts
+
+### STEP 3: Configure Application
+
+Edit **app.py** - Change these lines:
+```python
+# Line 12-16: Update database credentials
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'your_cpanel_mysql_user'
+app.config['MYSQL_PASSWORD'] = 'your_mysql_password'
+app.config['MYSQL_DB'] = 'your_database_name'
+```
+
+Edit **utils/email_sender.py** - Update lines 14-18:
+```python
+SMTP_SERVER = 'mail.yourdomain.com'  # Your cPanel mail server
+SMTP_PORT = 587
+SMTP_USERNAME = 'noreply@yourdomain.com'
+SMTP_PASSWORD = 'your_email_password'
+FROM_EMAIL = 'noreply@keemdrivingschool.com'
+```
+
+Edit **utils/whatsapp_sender.py** - Update lines 13-15:
+```python
+TWILIO_ACCOUNT_SID = 'your_twilio_sid'
+TWILIO_AUTH_TOKEN = 'your_twilio_token'
+TWILIO_WHATSAPP_NUMBER = 'whatsapp:+14155238886'
+```
+
+### STEP 4: Upload to cPanel
+
+1. **Compress your project:**
+```bash
+# Exclude unnecessary files
+tar -czf keem_app.tar.gz \
+  --exclude='venv' \
+  --exclude='__pycache__' \
+  --exclude='*.pyc' \
+  --exclude='.git' \
+  *
+```
+
+2. **Upload via cPanel File Manager:**
+   - Login to cPanel
+   - Go to File Manager
+   - Navigate to `public_html` or create subdirectory
+   - Upload `keem_app.tar.gz`
+   - Right-click → Extract
+
+### STEP 5: Setup Python App in cPanel
+
+1. Go to **"Setup Python App"** in cPanel
+2. Click **"Create Application"**
+3. Fill in:
+   - Python Version: `3.9` or higher
+   - Application Root: `/home/yourusername/public_html/keem_driving_school`
+   - Application URL: `/` (for root) or `/keem` (for subdirectory)
+   - Application startup file: `passenger_wsgi.py`
+   - Application Entry point: `app`
+4. Click **"Create"**
+
+### STEP 6: Install Dependencies
+
+1. In Python App section, look for "Enter to the virtual environment"
+2. Copy the command (looks like):
+```bash
+source /home/username/virtualenv/public_html/keem_driving_school/3.9/bin/activate && cd /home/username/public_html/keem_driving_school
+```
+
+3. Open **Terminal** in cPanel
+4. Paste and run the command
+5. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+### STEP 7: Setup MySQL Database
+
+1. Go to **"MySQL Databases"** in cPanel
+2. **Create Database:**
+   - Name: `keem_db` (will become username_keem_db)
+   - Click "Create Database"
+
+3. **Create User:**
+   - Username: `keem_user`
+   - Password: (generate strong password)
+   - Click "Create User"
+
+4. **Add User to Database:**
+   - Select user and database
+   - Grant ALL PRIVILEGES
+   - Click "Make Changes"
+
+5. **Import Database Schema:**
+   - Go to phpMyAdmin
+   - Select your database
+   - Click "Import"
+   - Choose `database.sql`
+   - Click "Go"
+
+### STEP 8: Update Configuration
+
+Edit the uploaded `app.py` with your actual database details:
+```python
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'username_keem_user'  # Your actual user
+app.config['MYSQL_PASSWORD'] = 'your_actual_password'
+app.config['MYSQL_DB'] = 'username_keem_db'  # Your actual database
+```
+
+Update `passenger_wsgi.py`:
+```python
+project_home = '/home/yourusername/public_html/keem_driving_school'
+```
+
+### STEP 9: Set Permissions
+
+In cPanel File Manager or Terminal:
+```bash
+chmod 755 static/uploads
+chmod 755 exports/pdfs
+chmod 755 exports/excel
+```
+
+### STEP 10: Restart Application
+
+1. Go back to **"Setup Python App"**
+2. Find your application
+3. Click **"Restart"** button
+4. Visit your domain!
+
+---
+
+## 🧪 Testing Your Installation
+
+### Test 1: Homepage
+Visit: `https://yourdomain.com`
+- Should see the KEEM homepage
+- Red/black theme
+- Navigation works
+
+### Test 2: Application Form
+Visit: `https://yourdomain.com/apply`
+- Fill out form
+- Submit application
+- Should see success message
+
+### Test 3: Admin Login
+Visit: `https://yourdomain.com/admin/login`
+- Email: `admin@keemdrivingschool.com`
+- Password: `admin123`
+- Should see dashboard
+
+### Test 4: View Application
+- In admin dashboard
+- Click on an application
+- Should see all details
+
+---
+
+## 🔧 Common Issues & Solutions
+
+### Issue 1: "Internal Server Error"
+**Solution:**
+```bash
+# Check error log in cPanel
+# Usually: /home/username/logs/
+
+# Common fixes:
+1. Verify Python version (3.8+)
+2. Check file permissions
+3. Verify database credentials
+4. Check passenger_wsgi.py path
+```
+
+### Issue 2: Database Connection Failed
+**Solution:**
+```bash
+# Test connection
+mysql -u username_keem_user -p
+
+# If fails:
+1. Verify user has ALL PRIVILEGES
+2. Check database name (includes username prefix)
+3. Verify password
+```
+
+### Issue 3: Module Import Errors
+**Solution:**
+```bash
+# Reinstall dependencies
+source /path/to/virtualenv/activate
+pip install --upgrade -r requirements.txt
+```
+
+### Issue 4: File Uploads Failing
+**Solution:**
+```bash
+# Fix permissions
+chmod 755 static/uploads
+chown username:username static/uploads
+
+# Verify in app.py:
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
+```
+
+### Issue 5: Email Not Sending
+**Solution:**
+1. Check cPanel email account exists
+2. Verify SMTP settings in `email_sender.py`
+3. Test with cPanel webmail first
+4. Check spam folder
+
+### Issue 6: Static Files Not Loading
+**Solution:**
+```apache
+# Add to .htaccess:
+<FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico)$">
+    Allow from all
+</FilesMatch>
+```
+
+---
+
+## 📝 Post-Installation Tasks
+
+### 1. Change Admin Password
+```sql
+-- Login to phpMyAdmin
+UPDATE admins 
+SET password = '$2b$12$NEW_HASH_HERE' 
+WHERE email = 'admin@keemdrivingschool.com';
+```
+
+Or use Python:
+```python
+from werkzeug.security import generate_password_hash
+print(generate_password_hash('your_new_password'))
+```
+
+### 2. Update Contact Information
+
+Edit in database or create settings page:
+```sql
+UPDATE settings 
+SET setting_value = '+260XXXXXXXXX' 
+WHERE setting_key = 'school_phone';
+```
+
+### 3. Setup Email Accounts
+
+In cPanel Email Accounts:
+- Create: `noreply@yourdomain.com`
+- Create: `admin@yourdomain.com`
+- Create: `info@yourdomain.com`
+
+### 4. Configure WhatsApp (Optional)
+
+1. Sign up at Twilio.com
+2. Get free trial credits
+3. Setup WhatsApp Sandbox
+4. Update credentials in `whatsapp_sender.py`
+
+### 5. Setup SSL Certificate
+
+In cPanel:
+1. Go to "SSL/TLS"
+2. Install Let's Encrypt (free)
+3. Enable "Force HTTPS Redirect"
+
+---
+
+## 📊 Admin Features Quick Guide
+
+### Managing Applications
+
+1. **View All Applications:**
+   - Admin → Applications
+   - Filter by status, branch
+   - Search functionality
+
+2. **Review Application:**
+   - Click "View" on any application
+   - See all details
+   - Upload documents visible
+
+3. **Accept Application:**
+   - Click "Accept" button
+   - Add notes (optional)
+   - System sends:
+     - Acceptance letter PDF via email
+     - WhatsApp notification
+     - Email notification
+
+4. **Reject Application:**
+   - Click "Reject" button
+   - Add reason in notes
+   - Student notified
+
+### Export Data
+
+1. **Single Application PDF:**
+   - View application
+   - Click "Export as PDF"
+   - Downloads immediately
+
+2. **Bulk Excel Export:**
+   - Admin → Applications
+   - Click "Export to Excel"
+   - Filters applied
+
+### Dashboard Features
+
+- Real-time statistics
+- Recent applications
+- Quick actions
+- Status overview
+
+---
+
+## 🔒 Security Checklist
+
+- [ ] Changed default admin password
+- [ ] Set strong SECRET_KEY in app.py
+- [ ] Enabled HTTPS/SSL
+- [ ] File upload restrictions in place
+- [ ] Database user has minimal required privileges
+- [ ] Sensitive files blocked in .htaccess
+- [ ] Regular backups scheduled
+- [ ] Error logs monitored
+
+---
+
+## 📞 Support Resources
+
+### Documentation
+- Flask: https://flask.palletsprojects.com/
+- MySQL: https://dev.mysql.com/doc/
+- Tailwind: https://tailwindcss.com/docs
+
+### Services
+- Twilio (WhatsApp): https://www.twilio.com/docs
+- Email: Your hosting provider documentation
+
+### Backup Commands
+```bash
+# Database backup
+mysqldump -u username -p database_name > backup.sql
+
+# Files backup
+tar -czf backup.tar.gz /path/to/project
+```
+
+---
+
+## 🎉 You're Done!
+
+Your KEEM Driving School Management System is now live!
+
+**Next Steps:**
+1. Test all features thoroughly
+2. Add content to About, Courses pages
+3. Upload school images
+4. Train staff on admin panel
+5. Promote online applications
+
+**Support:** For technical issues, refer to DEPLOYMENT.md or contact your developer.
+
+---
+
+## 📧 Contact
+
+KEEM Driving School
+- Website: www.keemdrivingschool.com
+- Email: info@keemdrivingschool.com
+- Phone: +260 XXX XXXXXX
+
+---
+
+**Copyright © 2024 KEEM Driving School. All rights reserved.**

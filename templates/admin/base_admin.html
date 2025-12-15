@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin - KEEM Driving School{% endblock %}</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        }
+        
+        .sidebar-link {
+            transition: all 0.3s;
+        }
+        
+        .sidebar-link:hover {
+            background-color: rgba(220, 38, 38, 0.1);
+            color: #DC2626;
+            border-left: 4px solid #DC2626;
+        }
+        
+        .sidebar-link.active {
+            background-color: rgba(220, 38, 38, 0.2);
+            color: #DC2626;
+            border-left: 4px solid #DC2626;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.1);
+            transform: translateY(-2px);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-gray-900 text-white flex-shrink-0 hidden md:block">
+            <div class="p-6">
+                <div class="flex items-center space-x-3 mb-8">
+                    <div class="w-10 h-10 gradient-bg rounded-full flex items-center justify-center">
+                        <i class="fas fa-car text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold">KEEM Admin</h1>
+                        <p class="text-xs text-gray-400">Dashboard</p>
+                    </div>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="/admin/dashboard" class="sidebar-link flex items-center px-4 py-3 text-gray-300 rounded">
+                        <i class="fas fa-tachometer-alt w-6"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    
+                    <a href="/admin/applications" class="sidebar-link flex items-center px-4 py-3 text-gray-300 rounded">
+                        <i class="fas fa-file-alt w-6"></i>
+                        <span>Applications</span>
+                    </a>
+                    
+                    <a href="/admin/applications?status=pending" class="sidebar-link flex items-center px-4 py-3 text-gray-300 rounded">
+                        <i class="fas fa-clock w-6"></i>
+                        <span>Pending</span>
+                        {% if stats and stats.pending > 0 %}
+                        <span class="ml-auto bg-red-600 text-white text-xs px-2 py-1 rounded-full">{{ stats.pending }}</span>
+                        {% endif %}
+                    </a>
+                    
+                    <a href="/admin/applications?status=accepted" class="sidebar-link flex items-center px-4 py-3 text-gray-300 rounded">
+                        <i class="fas fa-check-circle w-6"></i>
+                        <span>Accepted</span>
+                    </a>
+                    
+                    <a href="/admin/applications?status=rejected" class="sidebar-link flex items-center px-4 py-3 text-gray-300 rounded">
+                        <i class="fas fa-times-circle w-6"></i>
+                        <span>Rejected</span>
+                    </a>
+                    
+                    <div class="border-t border-gray-700 my-4"></div>
+                    
+                    <a href="/admin/export/excel" class="sidebar-link flex items-center px-4 py-3 text-gray-300 rounded">
+                        <i class="fas fa-file-excel w-6"></i>
+                        <span>Export Data</span>
+                    </a>
+                    
+                    <a href="/admin/settings" class="sidebar-link flex items-center px-4 py-3 text-gray-300 rounded">
+                        <i class="fas fa-cog w-6"></i>
+                        <span>Settings</span>
+                    </a>
+                    
+                    <div class="border-t border-gray-700 my-4"></div>
+                    
+                    <a href="/" class="sidebar-link flex items-center px-4 py-3 text-gray-300 rounded" target="_blank">
+                        <i class="fas fa-external-link-alt w-6"></i>
+                        <span>View Website</span>
+                    </a>
+                    
+                    <a href="/admin/logout" class="sidebar-link flex items-center px-4 py-3 text-red-400 rounded">
+                        <i class="fas fa-sign-out-alt w-6"></i>
+                        <span>Logout</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Bar -->
+            <header class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">{% block page_title %}Dashboard{% endblock %}</h2>
+                    <p class="text-gray-600 text-sm">{% block page_description %}Welcome to KEEM Admin Panel{% endblock %}</p>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button class="flex items-center space-x-3 focus:outline-none">
+                            <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center text-white font-bold">
+                                {{ session.user_name[0] if session.user_name else 'A' }}
+                            </div>
+                            <div class="text-left hidden md:block">
+                                <p class="font-semibold text-gray-800">{{ session.user_name }}</p>
+                                <p class="text-xs text-gray-600">Administrator</p>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="px-6 pt-4">
+                        {% for category, message in messages %}
+                            <div class="alert p-4 rounded-lg mb-4 {% if category == 'error' %}bg-red-100 text-red-800 border-l-4 border-red-500{% elif category == 'success' %}bg-green-100 text-green-800 border-l-4 border-green-500{% else %}bg-blue-100 text-blue-800 border-l-4 border-blue-500{% endif %}">
+                                <div class="flex items-center">
+                                    <i class="fas {% if category == 'error' %}fa-exclamation-circle{% elif category == 'success' %}fa-check-circle{% else %}fa-info-circle{% endif %} mr-3"></i>
+                                    <span>{{ message }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto bg-gray-100">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-hide flash messages
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                alert.style.transition = 'opacity 0.5s ease';
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.remove();
+                }, 500);
+            });
+        }, 5000);
+        
+        // Active link highlighting
+        const currentPath = window.location.pathname;
+        document.querySelectorAll('.sidebar-link').forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

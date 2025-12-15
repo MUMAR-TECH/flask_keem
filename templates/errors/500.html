@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Server Error | KEEM Driving School</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center px-4">
+        <div class="max-w-2xl w-full text-center">
+            <div class="mb-8">
+                <div class="w-32 h-32 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-exclamation-triangle text-white text-6xl"></i>
+                </div>
+                <h1 class="text-9xl font-bold text-gray-300">500</h1>
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Internal Server Error</h2>
+                <p class="text-xl text-gray-600 mb-8">
+                    Something went wrong on our end. We're working to fix the issue. Please try again later.
+                </p>
+            </div>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded text-left mb-8">
+                <h3 class="font-bold text-lg mb-2">What you can do:</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-yellow-500 mt-1 mr-2"></i>
+                        <span>Refresh the page and try again</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-yellow-500 mt-1 mr-2"></i>
+                        <span>Clear your browser cache and cookies</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-yellow-500 mt-1 mr-2"></i>
+                        <span>Come back in a few minutes</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fas fa-check text-yellow-500 mt-1 mr-2"></i>
+                        <span>If the problem persists, contact us</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="location.reload()" class="gradient-bg text-white px-8 py-3 rounded-full font-bold hover:opacity-90 transition">
+                    <i class="fas fa-sync-alt mr-2"></i>Try Again
+                </button>
+                <a href="/" class="border-2 border-red-600 text-red-600 px-8 py-3 rounded-full font-bold hover:bg-red-600 hover:text-white transition">
+                    <i class="fas fa-home mr-2"></i>Go Home
+                </a>
+            </div>
+            
+            <div class="mt-12 text-gray-600">
+                <p class="mb-2">Need immediate assistance?</p>
+                <p>
+                    <i class="fas fa-phone mr-2"></i>+260 XXX XXXXXX |
+                    <i class="fas fa-envelope ml-4 mr-2"></i>info@keemdrivingschool.com
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

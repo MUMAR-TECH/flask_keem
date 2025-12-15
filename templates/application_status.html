@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Application Status - KEEM Driving School{% endblock %}
+
+{% block content %}
+<section class="py-16 bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8 text-center gradient-text">Application Status</h1>
+            
+            {% if application %}
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <!-- Status Badge -->
+                <div class="text-center mb-8">
+                    {% if application.status == 'pending' %}
+                    <div class="w-24 h-24 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-clock text-yellow-600 text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Under Review</h2>
+                    <p class="text-gray-600">We're reviewing your application</p>
+                    {% elif application.status == 'accepted' %}
+                    <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-check-circle text-green-600 text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-green-600 mb-2">Congratulations!</h2>
+                    <p class="text-gray-600">Your application has been accepted</p>
+                    {% elif application.status == 'rejected' %}
+                    <div class="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-times-circle text-red-600 text-5xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-red-600 mb-2">Application Not Approved</h2>
+                    <p class="text-gray-600">Unfortunately, we cannot proceed with this application</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Application Details -->
+                <div class="border-t pt-6 space-y-4">
+                    <div class="flex justify-between">
+                        <span class="font-semibold text-gray-600">Application ID:</span>
+                        <span class="text-gray-900">#{{ application.id }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold text-gray-600">Name:</span>
+                        <span class="text-gray-900">{{ application.first_name }} {{ application.last_name }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold text-gray-600">Email:</span>
+                        <span class="text-gray-900">{{ application.email }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold text-gray-600">Branch:</span>
+                        <span class="text-gray-900">{{ application.branch }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold text-gray-600">Course:</span>
+                        <span class="text-gray-900">{{ application.course_type }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="font-semibold text-gray-600">Applied On:</span>
+                        <span class="text-gray-900">{{ application.created_at.strftime('%B %d, %Y') }}</span>
+                    </div>
+                </div>
+                
+                <!-- Next Steps -->
+                {% if application.status == 'pending' %}
+                <div class="mt-8 bg-blue-50 border-l-4 border-blue-500 p-6 rounded">
+                    <h3 class="font-bold text-lg mb-2">What's Next?</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-blue-500 mt-1 mr-2"></i>
+                            <span>We'll review your application within 2-3 business days</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-blue-500 mt-1 mr-2"></i>
+                            <span>You'll receive an email and WhatsApp notification with our decision</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-blue-500 mt-1 mr-2"></i>
+                            <span>If accepted, we'll send you enrollment details</span>
+                        </li>
+                    </ul>
+                </div>
+                {% elif application.status == 'accepted' %}
+                <div class="mt-8 bg-green-50 border-l-4 border-green-500 p-6 rounded">
+                    <h3 class="font-bold text-lg mb-2">Next Steps:</h3>
+                    <ul class="space-y-2 text-gray-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Check your email for the acceptance letter</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Contact us within 7 days to schedule enrollment</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-2"></i>
+                            <span>Bring required documents to the branch</span>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+                
+                <!-- Contact Information -->
+                <div class="mt-8 text-center">
+                    <p class="text-gray-600 mb-4">Need help? Contact us:</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="tel:+260XXXXXXXXX" class="flex items-center justify-center text-red-600 hover:text-red-700 font-semibold">
+                            <i class="fas fa-phone mr-2"></i>+260 XXX XXXXXX
+                        </a>
+                        <a href="mailto:info@keemdrivingschool.com" class="flex items-center justify-center text-red-600 hover:text-red-700 font-semibold">
+                            <i class="fas fa-envelope mr-2"></i>Email Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+                <i class="fas fa-search text-gray-400 text-6xl mb-4"></i>
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Application Not Found</h2>
+                <p class="text-gray-600 mb-6">We couldn't find an application with this ID.</p>
+                <a href="/apply" class="btn-primary text-white px-8 py-3 rounded-full font-semibold inline-block">
+                    Submit New Application
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

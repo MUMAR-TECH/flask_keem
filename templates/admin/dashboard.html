@@ -1,0 +1,157 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Dashboard - KEEM Admin{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <!-- Welcome Banner -->
+    <div class="gradient-bg rounded-2xl p-8 text-white mb-8">
+        <h1 class="text-3xl font-bold mb-2">Welcome back, {{ session.user_name }}!</h1>
+        <p class="text-red-100">Here's what's happening with your driving school today</p>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Total Applications -->
+        <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-file-alt text-blue-600 text-xl"></i>
+                </div>
+                <span class="text-sm text-gray-500">Total</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ stats.total }}</h3>
+            <p class="text-gray-600 text-sm">Total Applications</p>
+        </div>
+        
+        <!-- Pending Applications -->
+        <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                </div>
+                <span class="text-sm text-gray-500">Pending</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ stats.pending }}</h3>
+            <p class="text-gray-600 text-sm">Awaiting Review</p>
+        </div>
+        
+        <!-- Accepted Applications -->
+        <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                </div>
+                <span class="text-sm text-gray-500">Accepted</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ stats.accepted }}</h3>
+            <p class="text-gray-600 text-sm">Approved Students</p>
+        </div>
+        
+        <!-- Rejected Applications -->
+        <div class="bg-white rounded-xl shadow-md p-6 card-hover">
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-times-circle text-red-600 text-xl"></i>
+                </div>
+                <span class="text-sm text-gray-500">Rejected</span>
+            </div>
+            <h3 class="text-3xl font-bold text-gray-800 mb-1">{{ stats.rejected }}</h3>
+            <p class="text-gray-600 text-sm">Declined</p>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <a href="/admin/applications?status=pending" class="bg-white rounded-xl shadow-md p-6 card-hover flex items-center">
+            <div class="w-14 h-14 bg-yellow-100 rounded-lg flex items-center justify-center mr-4">
+                <i class="fas fa-tasks text-yellow-600 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-gray-800">Review Applications</h3>
+                <p class="text-gray-600 text-sm">{{ stats.pending }} pending review</p>
+            </div>
+        </a>
+        
+        <a href="/admin/export/excel" class="bg-white rounded-xl shadow-md p-6 card-hover flex items-center">
+            <div class="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                <i class="fas fa-file-excel text-green-600 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-gray-800">Export Data</h3>
+                <p class="text-gray-600 text-sm">Download Excel report</p>
+            </div>
+        </a>
+        
+        <a href="/admin/settings" class="bg-white rounded-xl shadow-md p-6 card-hover flex items-center">
+            <div class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                <i class="fas fa-cog text-blue-600 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg text-gray-800">Settings</h3>
+                <p class="text-gray-600 text-sm">Manage system settings</p>
+            </div>
+        </a>
+    </div>
+    
+    <!-- Recent Applications -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Recent Applications</h2>
+            <a href="/admin/applications" class="text-red-600 hover:text-red-700 font-semibold">
+                View All <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applicant</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for app in recent_applications %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">#{{ app.id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">{{ app.first_name }} {{ app.last_name }}</div>
+                            <div class="text-sm text-gray-500">{{ app.email }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ app.branch }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ app.course_type }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if app.status == 'pending' %}
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                Pending
+                            </span>
+                            {% elif app.status == 'accepted' %}
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Accepted
+                            </span>
+                            {% elif app.status == 'rejected' %}
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                Rejected
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ app.created_at.strftime('%Y-%m-%d') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <a href="/admin/application/{{ app.id }}" class="text-red-600 hover:text-red-900">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - KEEM Driving School{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="gradient-bg text-white py-16">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <h1 class="text-5xl font-bold mb-4">Get In Touch</h1>
+            <p class="text-xl text-gray-200">We're here to answer your questions</p>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            <!-- Contact Form -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h2 class="text-3xl font-bold mb-6 gradient-text">Send Us a Message</h2>
+                
+                <form id="contactForm" class="space-y-6">
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-2">Full Name *</label>
+                        <input type="text" name="name" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-600 focus:outline-none transition">
+                    </div>
+                    
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-2">Email Address *</label>
+                        <input type="email" name="email" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-600 focus:outline-none transition">
+                    </div>
+                    
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-2">Phone Number</label>
+                        <input type="tel" name="phone" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-600 focus:outline-none transition" placeholder="+260">
+                    </div>
+                    
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-2">Subject *</label>
+                        <select name="subject" required class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-600 focus:outline-none transition">
+                            <option value="">Select a subject...</option>
+                            <option value="Course Information">Course Information</option>
+                            <option value="Application Status">Application Status</option>
+                            <option value="Pricing & Payment">Pricing & Payment</option>
+                            <option value="Schedule & Booking">Schedule & Booking</option>
+                            <option value="General Inquiry">General Inquiry</option>
+                            <option value="Complaint">Complaint</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block font-semibold text-gray-700 mb-2">Message *</label>
+                        <textarea name="message" required rows="5" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-red-600 focus:outline-none transition" placeholder="Tell us how we can help you..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-primary w-full text-white px-6 py-4 rounded-full font-bold text-lg">
+                        <span id="submitText">Send Message</span>
+                        <span id="submitLoader" class="hidden">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>Sending...
+                        </span>
+                    </button>
+                </form>
+                
+                <div id="successMessage" class="hidden mt-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle mr-3 text-2xl"></i>
+                        <div>
+                            <p class="font-bold">Message Sent!</p>
+                            <p class="text-sm">We'll get back to you within 24 hours.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Information -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h2 class="text-3xl font-bold mb-6 gradient-text">Contact Information</h2>
+                    
+                    <div class="space-y-6">
+                        <!-- General Inquiries -->
+                        <div class="flex items-start">
+                            <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fas fa-envelope text-red-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">Email</h3>
+                                <p class="text-gray-600">info@keemdrivingschool.com</p>
+                                <p class="text-gray-600 text-sm mt-1">For general inquiries</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Phone -->
+                        <div class="flex items-start">
+                            <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fas fa-phone text-red-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">Phone</h3>
+                                <p class="text-gray-600">+260 XXX XXXXXX</p>
+                                <p class="text-gray-600 text-sm mt-1">Mon-Fri: 8:00 AM - 5:00 PM</p>
+                            </div>
+                        </div>
+                        
+                        <!-- WhatsApp -->
+                        <div class="flex items-start">
+                            <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fab fa-whatsapp text-red-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">WhatsApp</h3>
+                                <p class="text-gray-600">+260 XXX XXXXXX</p>
+                                <p class="text-gray-600 text-sm mt-1">Quick responses 24/7</p>
+                                <a href="https://wa.me/260XXXXXXXXX" target="_blank" class="inline-block mt-2 text-red-600 hover:text-red-700 font-semibold">
+                                    Chat Now <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Working Hours -->
+                        <div class="flex items-start">
+                            <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                                <i class="fas fa-clock text-red-600 text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg mb-1">Working Hours</h3>
+                                <p class="text-gray-600">Monday - Friday: 8:00 AM - 5:00 PM</p>
+                                <p class="text-gray-600">Saturday: 8:00 AM - 2:00 PM</p>
+                                <p class="text-gray-600">Sunday: Closed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Social Media -->
+                <div class="bg-white rounded-2xl shadow-xl p-8">
+                    <h3 class="text-2xl font-bold mb-6 gradient-text">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white hover:bg-blue-700 transition">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-blue-400 rounded-full flex items-center justify-center text-white hover:bg-blue-500 transition">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-pink-600 rounded-full flex items-center justify-center text-white hover:bg-pink-700 transition">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white hover:bg-red-700 transition">
+                            <i class="fab fa-youtube text-xl"></i>
+                        </a>
+                    </div>
+                    <p class="text-gray-600 text-sm mt-4">
+                        Stay updated with our latest news, tips, and success stories!
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">Frequently Asked Questions</h2>
+        
+        <div class="max-w-4xl mx-auto space-y-4">
+            <!-- FAQ 1 -->
+            <div class="bg-gray-50 rounded-lg overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-100 transition">
+                    <span>How do I apply for a course?</span>
+                    <i class="fas fa-chevron-down text-red-600"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t">
+                    <p class="text-gray-600">
+                        You can apply online through our website by clicking the "Apply Now" button and filling out the application form. Alternatively, you can visit any of our branches in person to submit your application.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- FAQ 2 -->
+            <div class="bg-gray-50 rounded-lg overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-100 transition">
+                    <span>What documents do I need to bring?</span>
+                    <i class="fas fa-chevron-down text-red-600"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t">
+                    <p class="text-gray-600">
+                        You'll need your NRC (National Registration Card), 2 passport-sized photographs, proof of residence, and a medical fitness certificate for certain course types. Bring both originals and copies.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- FAQ 3 -->
+            <div class="bg-gray-50 rounded-lg overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-100 transition">
+                    <span>How long does it take to complete a course?</span>
+                    <i class="fas fa-chevron-down text-red-600"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t">
+                    <p class="text-gray-600">
+                        Course duration varies: Class A (Motorcycle) - 4 weeks, Class B (Light Vehicle) - 6 weeks, Class C (Heavy Vehicle) - 8 weeks, Class D (PSV) - 6 weeks, Refresher - 2 weeks, and Defensive Driving - 3 weeks.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- FAQ 4 -->
+            <div class="bg-gray-50 rounded-lg overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-100 transition">
+                    <span>Do you offer payment plans?</span>
+                    <i class="fas fa-chevron-down text-red-600"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t">
+                    <p class="text-gray-600">
+                        Yes! We offer flexible payment options including full payment (5% discount), monthly installments, and a 50% deposit plan. Contact us to discuss which plan works best for you.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- FAQ 5 -->
+            <div class="bg-gray-50 rounded-lg overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-100 transition">
+                    <span>Can I choose my training schedule?</span>
+                    <i class="fas fa-chevron-down text-red-600"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t">
+                    <p class="text-gray-600">
+                        Absolutely! We offer morning, afternoon, and weekend classes to accommodate your schedule. During enrollment, you can discuss your preferred times with our coordinators.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- FAQ 6 -->
+            <div class="bg-gray-50 rounded-lg overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-100 transition">
+                    <span>Is training available in local languages?</span>
+                    <i class="fas fa-chevron-down text-red-600"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t">
+                    <p class="text-gray-600">
+                        Yes! We provide instruction in English, Bemba, Nyanja, Tonga, and Lozi. Just indicate your preferred language when applying.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section (Placeholder) -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">Our Locations</h2>
+        <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <!-- Luanshya Map Placeholder -->
+            <div class="bg-gray-300 rounded-2xl h-64 flex items-center justify-center">
+                <div class="text-center text-gray-600">
+                    <i class="fas fa-map-marked-alt text-6xl mb-4"></i>
+                    <p class="font-semibold">Luanshya Branch Map</p>
+                    <p class="text-sm">Integrate Google Maps here</p>
+                </div>
+            </div>
+            
+            <!-- Mufulira Map Placeholder -->
+            <div class="bg-gray-300 rounded-2xl h-64 flex items-center justify-center">
+                <div class="text-center text-gray-600">
+                    <i class="fas fa-map-marked-alt text-6xl mb-4"></i>
+                    <p class="font-semibold">Mufulira Branch Map</p>
+                    <p class="text-sm">Integrate Google Maps here</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// FAQ Toggle
+document.querySelectorAll('.faq-toggle').forEach(button => {
+    button.addEventListener('click', function() {
+        const content = this.nextElementSibling;
+        const icon = this.querySelector('i');
+        
+        content.classList.toggle('hidden');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
+    });
+});
+
+// Contact Form
+document.getElementById('contactForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const submitText = document.getElementById('submitText');
+    const submitLoader = document.getElementById('submitLoader');
+    const successMessage = document.getElementById('successMessage');
+    
+    submitBtn.disabled = true;
+    submitText.classList.add('hidden');
+    submitLoader.classList.remove('hidden');
+    
+    const formData = new FormData(e.target);
+    
+    try {
+        const response = await fetch('/contact', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            successMessage.classList.remove('hidden');
+            e.target.reset();
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+            }, 5000);
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again or contact us directly.');
+    } finally {
+        submitBtn.disabled = false;
+        submitText.classList.remove('hidden');
+        submitLoader.classList.add('hidden');
+    }
+});
+</script>
+{% endblock %}

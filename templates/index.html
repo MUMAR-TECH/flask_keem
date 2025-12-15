@@ -1,0 +1,343 @@
+{% extends "base.html" %}
+
+{% block title %}Home - KEEM Driving School{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="gradient-bg text-white py-20 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute transform rotate-45 -left-20 top-20 w-96 h-96 bg-white rounded-full"></div>
+        <div class="absolute transform -rotate-12 right-10 bottom-10 w-80 h-80 bg-white rounded-full"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div class="animate-fade-in">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                    Start Your Journey to <span class="text-red-300">Confident Driving</span>
+                </h1>
+                <p class="text-xl mb-8 text-gray-200">
+                    Professional driver training with experienced instructors. 
+                    Get your license with KEEM Driving School - Zambia's trusted choice.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="/apply" class="bg-white text-red-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition hover-scale text-center">
+                        <i class="fas fa-edit mr-2"></i>Apply Now
+                    </a>
+                    <a href="/courses" class="border-2 border-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-red-600 transition text-center">
+                        <i class="fas fa-book mr-2"></i>View Courses
+                    </a>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-3 gap-6 mt-12">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-red-300">500+</div>
+                        <div class="text-sm text-gray-300 mt-1">Licensed Drivers</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-red-300">95%</div>
+                        <div class="text-sm text-gray-300 mt-1">Pass Rate</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold text-red-300">2</div>
+                        <div class="text-sm text-gray-300 mt-1">Branches</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hidden md:block animate-fade-in">
+                <div class="relative">
+                    <div class="w-full h-96 bg-white bg-opacity-10 backdrop-blur-lg rounded-3xl p-8 flex items-center justify-center">
+                        <i class="fas fa-car text-white text-9xl opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us Section -->
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold mb-4 gradient-text">Why Choose KEEM?</h2>
+            <p class="text-gray-600 text-lg">Experience the difference with professional training</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="card-hover bg-gray-50 p-8 rounded-2xl text-center">
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-user-tie text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Expert Instructors</h3>
+                <p class="text-gray-600">
+                    Learn from certified professionals with years of experience in driver training
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="card-hover bg-gray-50 p-8 rounded-2xl text-center">
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-road text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Practical Training</h3>
+                <p class="text-gray-600">
+                    Extensive hands-on driving experience on real roads and traffic conditions
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="card-hover bg-gray-50 p-8 rounded-2xl text-center">
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-certificate text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">High Pass Rate</h3>
+                <p class="text-gray-600">
+                    95% of our students pass on their first attempt - proven success record
+                </p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="card-hover bg-gray-50 p-8 rounded-2xl text-center">
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-money-bill-wave text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Affordable Fees</h3>
+                <p class="text-gray-600">
+                    Competitive pricing with flexible payment plans to suit your budget
+                </p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="card-hover bg-gray-50 p-8 rounded-2xl text-center">
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-clock text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Flexible Schedule</h3>
+                <p class="text-gray-600">
+                    Morning, afternoon, and weekend classes available to fit your lifestyle
+                </p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="card-hover bg-gray-50 p-8 rounded-2xl text-center">
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-language text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Local Languages</h3>
+                <p class="text-gray-600">
+                    Training available in English, Bemba, Nyanja, and other local languages
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Courses Preview -->
+<section class="py-20 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold mb-4 gradient-text">Our Courses</h2>
+            <p class="text-gray-600 text-lg">Choose the course that fits your needs</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Course 1 -->
+            <div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="gradient-bg p-6 text-white">
+                    <h3 class="text-2xl font-bold mb-2">Class B</h3>
+                    <p class="text-red-100">Light Vehicle License</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-3xl font-bold text-red-600 mb-4">K2,500</div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">6 weeks comprehensive training</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Theory and practical lessons</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Road safety training</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Test preparation</span>
+                        </li>
+                    </ul>
+                    <a href="/apply" class="btn-primary block text-center text-white px-6 py-3 rounded-full font-semibold">
+                        Enroll Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Course 2 -->
+            <div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden border-4 border-red-600">
+                <div class="bg-red-600 text-white text-center py-2 text-sm font-bold">
+                    MOST POPULAR
+                </div>
+                <div class="gradient-bg p-6 text-white">
+                    <h3 class="text-2xl font-bold mb-2">Class C</h3>
+                    <p class="text-red-100">Heavy Vehicle License</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-3xl font-bold text-red-600 mb-4">K3,500</div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">8 weeks intensive training</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Heavy vehicle operation</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Load management</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Advanced safety training</span>
+                        </li>
+                    </ul>
+                    <a href="/apply" class="btn-primary block text-center text-white px-6 py-3 rounded-full font-semibold">
+                        Enroll Now
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Course 3 -->
+            <div class="card-hover bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="gradient-bg p-6 text-white">
+                    <h3 class="text-2xl font-bold mb-2">Class D</h3>
+                    <p class="text-red-100">PSV License</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-3xl font-bold text-red-600 mb-4">K3,000</div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">6 weeks specialized training</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Passenger safety protocols</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Commercial driving skills</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Customer service training</span>
+                        </li>
+                    </ul>
+                    <a href="/apply" class="btn-primary block text-center text-white px-6 py-3 rounded-full font-semibold">
+                        Enroll Now
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-12">
+            <a href="/courses" class="btn-primary text-white px-8 py-4 rounded-full font-bold hover-scale inline-block">
+                View All Courses <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold mb-4 gradient-text">What Our Students Say</h2>
+            <p class="text-gray-600 text-lg">Real experiences from real people</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Testimonial 1 -->
+            <div class="bg-gray-50 p-8 rounded-2xl card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                        JM
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-lg">John Mwansa</h4>
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-600 italic">
+                    "KEEM Driving School gave me the confidence I needed. The instructors were patient and professional. I passed on my first try!"
+                </p>
+            </div>
+            
+            <!-- Testimonial 2 -->
+            <div class="bg-gray-50 p-8 rounded-2xl card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                        MK
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-lg">Mary Kaunda</h4>
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-600 italic">
+                    "Best driving school in Luanshya! The facilities are great and they offer training in local languages which really helped me."
+                </p>
+            </div>
+            
+            <!-- Testimonial 3 -->
+            <div class="bg-gray-50 p-8 rounded-2xl card-hover">
+                <div class="flex items-center mb-4">
+                    <div class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                        PC
+                    </div>
+                    <div class="ml-4">
+                        <h4 class="font-bold text-lg">Peter Chanda</h4>
+                        <div class="flex text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-gray-600 italic">
+                    "Affordable fees and excellent service. The instructors are very knowledgeable and make learning fun. Highly recommended!"
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 gradient-bg text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">Ready to Start Your Driving Journey?</h2>
+        <p class="text-xl mb-8 text-gray-200">Join hundreds of satisfied students who trust KEEM Driving School</p>
+        <a href="/apply" class="bg-white text-red-600 px-12 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition hover-scale inline-block">
+            Apply Now - It's Easy! <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+    </div>
+</section>
+{% endblock %}
