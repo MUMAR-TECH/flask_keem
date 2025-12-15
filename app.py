@@ -6,7 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from functools import wraps
 import os
 import json
@@ -67,8 +67,8 @@ class Admin(UserMixin, db.Model):
     branch = db.Column(db.String(20), default='Luanshya')
     specialization = db.Column(db.String(100))
     is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     last_login = db.Column(db.DateTime)
     
     # Relationships
@@ -76,8 +76,10 @@ class Admin(UserMixin, db.Model):
     reviewed_applications = db.relationship('Application', backref='reviewer', foreign_keys='Application.reviewed_by')
     created_students = db.relationship('Student', backref='creator', foreign_keys='Student.created_by')
     assigned_lessons = db.relationship('Lesson', backref='instructor', foreign_keys='Lesson.instructor_id')
-    received_payments = db.relationship('Payment', backref='receiver', foreign_keys='Payment.received_by')
-    verified_payments = db.relationship('Payment', backref='verifier', foreign_keys='Payment.verified_by')
+    
+    # Fixed: Remove duplicate relationships and use unique backref names
+    payments_received = db.relationship('Payment', backref='payment_receiver', foreign_keys='Payment.received_by')
+    payments_verified = db.relationship('Payment', backref='payment_verifier', foreign_keys='Payment.verified_by')
     
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -86,7 +88,7 @@ class Admin(UserMixin, db.Model):
         return check_password_hash(self.password, password)
     
     def update_last_login(self):
-        self.last_login = datetime.utcnow()
+        self.last_login = datetime.now(timezone.utc)
         db.session.commit()
     
     @property
@@ -103,6 +105,14 @@ class Admin(UserMixin, db.Model):
         # Check if branch matches user's branch
         branch = Branch.query.get(branch_id)
         return branch and branch.name == self.branch
+    
+    @property
+    def branch_id(self):
+        """Get the branch ID from the branch name"""
+        if self.branch == 'Both':
+            return None  # Can access all branches
+        branch_obj = Branch.query.filter_by(name=self.branch).first()
+        return branch_obj.id if branch_obj else None
 
 class Branch(db.Model):
     __tablename__ = 'branches'
@@ -116,7 +126,7 @@ class Branch(db.Model):
     email = db.Column(db.String(120))
     manager_id = db.Column(db.Integer, db.ForeignKey('admins.id'))
     is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     applications = db.relationship('Application', backref='branch_ref', foreign_keys='Application.branch_id')
@@ -140,13 +150,17 @@ class Course(db.Model):
     branch_id = db.Column(db.Integer, db.ForeignKey('branches.id'))
     instructor_id = db.Column(db.Integer, db.ForeignKey('admins.id'))
     is_active = db.Column(db.Boolean, default=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     branch = db.relationship('Branch', backref='branch_courses', foreign_keys=[branch_id])
     instructor = db.relationship('Admin', backref='instructor_courses', foreign_keys=[instructor_id])
-    applications = db.relationship('Application', backref='course_applications', foreign_keys='Application.course_id')
+    applications = db.relationship(
+        'Application',
+        back_populates='course',
+        cascade='all, delete-orphan'
+    )
     students = db.relationship('Student', backref='student_course', foreign_keys='Student.course_id')
     lessons = db.relationship('Lesson', backref='course_lessons', foreign_keys='Lesson.course_id')
 
@@ -157,7 +171,7 @@ class Application(db.Model):
     
     # Application Details
     application_number = db.Column(db.String(50), unique=True, nullable=False)
-    application_date = db.Column(db.Date, nullable=False, default=datetime.utcnow().date)
+    application_date = db.Column(db.Date, nullable=False, default=lambda: datetime.now(timezone.utc).date())
     status = db.Column(db.String(20), default='pending')
     
     # Personal Information
@@ -202,11 +216,14 @@ class Application(db.Model):
     medical_certificate = db.Column(db.String(200))
     
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
-    course = db.relationship('Course', backref='applications', foreign_keys=[course_id])
+    course = db.relationship(
+        'Course',
+        back_populates='applications'
+    )    
     branch = db.relationship('Branch', backref='applications', foreign_keys=[branch_id])
     reviewer_rel = db.relationship('Admin', backref='reviewed_apps', foreign_keys=[reviewed_by])
     student = db.relationship('Student', backref='application', uselist=False, foreign_keys='Student.application_id')
@@ -218,7 +235,7 @@ class Application(db.Model):
     @property
     def age(self):
         if self.date_of_birth:
-            today = datetime.utcnow().date()
+            today = datetime.now(timezone.utc).date()
             return today.year - self.date_of_birth.year - ((today.month, today.day) < (self.date_of_birth.month, self.date_of_birth.day))
         return None
 
@@ -232,7 +249,7 @@ class Student(db.Model):
     application_id = db.Column(db.Integer, db.ForeignKey('applications.id'), unique=True, nullable=False)
     
     # Enrollment Details
-    enrollment_date = db.Column(db.Date, nullable=False, default=datetime.utcnow().date)
+    enrollment_date = db.Column(db.Date, nullable=False, default=lambda: datetime.now(timezone.utc).date())
     course_start_date = db.Column(db.Date, nullable=False)
     course_end_date = db.Column(db.Date)
     
@@ -253,8 +270,8 @@ class Student(db.Model):
     created_by = db.Column(db.Integer, db.ForeignKey('admins.id'))
     
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     course = db.relationship('Course', backref='students', foreign_keys=[course_id])
@@ -321,8 +338,8 @@ class Lesson(db.Model):
     vehicle_used = db.Column(db.String(100))
     
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Relationships
     course = db.relationship('Course', backref='lessons', foreign_keys=[course_id])
@@ -339,7 +356,7 @@ class Lesson(db.Model):
     
     @property
     def is_upcoming(self):
-        return self.scheduled_date >= datetime.utcnow().date() and self.status == 'scheduled'
+        return self.scheduled_date >= datetime.now(timezone.utc).date() and self.status == 'scheduled'
 
 class Payment(db.Model):
     __tablename__ = 'payments'
@@ -360,7 +377,7 @@ class Payment(db.Model):
     status = db.Column(db.String(20), default='pending')
     
     # Dates
-    payment_date = db.Column(db.Date, nullable=False, default=datetime.utcnow().date)
+    payment_date = db.Column(db.Date, nullable=False, default=lambda: datetime.now(timezone.utc).date())
     received_date = db.Column(db.Date)
     
     # Administrative
@@ -369,10 +386,10 @@ class Payment(db.Model):
     notes = db.Column(db.Text)
     
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
-    # Relationships
+    # Relationships - Fixed to avoid conflict
     student = db.relationship('Student', backref='student_payments_rel', foreign_keys=[student_id])
     receiver = db.relationship('Admin', backref='received_payments_rel', foreign_keys=[received_by])
     verifier = db.relationship('Admin', backref='verified_payments_rel', foreign_keys=[verified_by])
@@ -412,7 +429,7 @@ class ContactMessage(db.Model):
     response_date = db.Column(db.DateTime)
     
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     
     # Relationships
     responder = db.relationship('Admin', backref='responded_messages', foreign_keys=[responded_by])
@@ -447,7 +464,7 @@ class Notification(db.Model):
     action_text = db.Column(db.String(50))
     
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     read_at = db.Column(db.DateTime)
 
 class Setting(db.Model):
@@ -460,7 +477,7 @@ class Setting(db.Model):
     category = db.Column(db.String(50), default='general')
     description = db.Column(db.Text)
     is_public = db.Column(db.Boolean, default=False)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     @property
     def typed_value(self):
@@ -484,7 +501,7 @@ class StudentPortalAccess(db.Model):
     access_code = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(120), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     last_login = db.Column(db.DateTime)
     login_count = db.Column(db.Integer, default=0)
     is_active = db.Column(db.Boolean, default=True)
@@ -500,7 +517,7 @@ class StudentPortalAccess(db.Model):
     
     def record_login(self):
         """Record successful login"""
-        self.last_login = datetime.utcnow()
+        self.last_login = datetime.now(timezone.utc)
         self.login_count += 1
         db.session.commit()
 
@@ -536,7 +553,7 @@ def role_required(roles):
 
 def generate_application_number():
     """Generate unique application number"""
-    today = datetime.utcnow()
+    today = datetime.now(timezone.utc)
     year = today.year
     month = today.month
     
@@ -550,12 +567,12 @@ def generate_application_number():
 
 def generate_student_number(application_id):
     """Generate unique student number"""
-    today = datetime.utcnow()
+    today = datetime.now(timezone.utc)
     return f"STU-{today.strftime('%Y%m')}{application_id:04d}"
 
 def generate_payment_number(student_id):
     """Generate unique payment number"""
-    today = datetime.utcnow()
+    today = datetime.now(timezone.utc)
     count = Payment.query.filter(
         db.extract('year', Payment.created_at) == today.year,
         db.extract('month', Payment.created_at) == today.month
@@ -565,7 +582,7 @@ def generate_payment_number(student_id):
 def save_uploaded_file(file, folder='documents'):
     """Save uploaded file and return filename"""
     if file and allowed_file(file.filename):
-        filename = secure_filename(f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{file.filename}")
+        filename = secure_filename(f"{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}_{file.filename}")
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], folder, filename)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
         file.save(file_path)
@@ -590,8 +607,6 @@ def create_notification(user_id, user_type, title, message, notification_type='s
     return notification
 
 
-
-
 def generate_access_code():
     """Generate a unique 8-character access code"""
     while True:
@@ -607,12 +622,9 @@ def generate_access_code():
             return access_code
 
 
-
-
-
 def generate_student_id_number():
     """Generate student ID in format: YYYYMMDDD"""
-    today = datetime.utcnow()
+    today = datetime.now(timezone.utc)
     
     # Get the last student number for today
     last_student = Student.query.filter(
@@ -704,10 +716,11 @@ def contact():
             {message}
             
             Message ID: {contact_msg.id}
-            Date: {datetime.utcnow().strftime('%Y-%m-%d %H:%M')}
+            Date: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M')}
             """
             
-            send_email(admin_email, email_subject, email_body)
+            # Uncomment when email sender is implemented
+            # send_email(admin_email, email_subject, email_body)
             
             # Send confirmation to user
             user_message = f"""
@@ -723,7 +736,8 @@ def contact():
             Best regards,
             KEEM Driving School Team
             """
-            send_email(email, "Message Received - KEEM Driving School", user_message)
+            # Uncomment when email sender is implemented
+            # send_email(email, "Message Received - KEEM Driving School", user_message)
             
             return jsonify({
                 'success': True,
@@ -769,7 +783,7 @@ def apply():
         # Create application
         application = Application(
             application_number=application_number,
-            application_date=datetime.utcnow().date(),
+            application_date=datetime.now(timezone.utc).date(),
             first_name=data.get('first_name'),
             last_name=data.get('last_name'),
             email=data.get('email'),
@@ -828,7 +842,8 @@ def apply():
         Please login to the admin dashboard to review this application.
         """
         
-        send_email(admin_email, email_subject, email_body)
+        # Uncomment when email sender is implemented
+        # send_email(admin_email, email_subject, email_body)
         
         # Send confirmation to applicant
         applicant_message = f"""
@@ -852,7 +867,8 @@ def apply():
         KEEM Driving School Team
         """
         
-        send_email(application.email, "Application Received - KEEM Driving School", applicant_message)
+        # Uncomment when email sender is implemented
+        # send_email(application.email, "Application Received - KEEM Driving School", applicant_message)
         
         # Create notification for admin
         create_notification(
@@ -932,54 +948,92 @@ def admin_dashboard():
     
     # Get statistics based on user role
     if current_user.is_super_admin or current_user.branch == 'Both':
-        # Show all data
+        # Show all data for super admin or users with access to both branches
         total_applications = Application.query.count()
         pending_applications = Application.query.filter_by(status='pending').count()
         accepted_applications = Application.query.filter_by(status='accepted').count()
+        rejected_applications = Application.query.filter_by(status='rejected').count()
         total_students = Student.query.count()
         active_students = Student.query.filter_by(status='active').count()
         total_payments = Payment.query.count()
         recent_payments = Payment.query.order_by(Payment.created_at.desc()).limit(5).all()
     else:
-        # Show only data for user's branch
-        total_applications = Application.query.filter_by(branch_id=current_user.branch_id).count()
-        pending_applications = Application.query.filter_by(branch_id=current_user.branch_id, status='pending').count()
-        accepted_applications = Application.query.filter_by(branch_id=current_user.branch_id, status='accepted').count()
-        total_students = Student.query.filter_by(branch_id=current_user.branch_id).count()
-        active_students = Student.query.filter_by(branch_id=current_user.branch_id, status='active').count()
-        total_payments = Payment.query.join(Student).filter(Student.branch_id == current_user.branch_id).count()
-        recent_payments = Payment.query.join(Student).filter(Student.branch_id == current_user.branch_id)\
-            .order_by(Payment.created_at.desc()).limit(5).all()
+        # Show only data for user's specific branch
+        # First get the branch object by name
+        branch = Branch.query.filter_by(name=current_user.branch).first()
+        
+        if branch:
+            # Use the branch ID for filtering
+            branch_id = branch.id
+            total_applications = Application.query.filter_by(branch_id=branch_id).count()
+            pending_applications = Application.query.filter_by(branch_id=branch_id, status='pending').count()
+            accepted_applications = Application.query.filter_by(branch_id=branch_id, status='accepted').count()
+            rejected_applications = Application.query.filter_by(branch_id=branch_id, status='rejected').count()
+            total_students = Student.query.filter_by(branch_id=branch_id).count()
+            active_students = Student.query.filter_by(branch_id=branch_id, status='active').count()
+            total_payments = Payment.query.join(Student).filter(Student.branch_id == branch_id).count()
+            recent_payments = Payment.query.join(Student).filter(Student.branch_id == branch_id)\
+                .order_by(Payment.created_at.desc()).limit(5).all()
+        else:
+            # Branch not found, show empty statistics
+            total_applications = 0
+            pending_applications = 0
+            accepted_applications = 0
+            rejected_applications = 0
+            total_students = 0
+            active_students = 0
+            total_payments = 0
+            recent_payments = []
     
-    # Get recent applications
-    recent_applications = Application.query.order_by(Application.created_at.desc()).limit(10).all()
+    # Get recent applications (for dashboard display)
+    if current_user.is_super_admin or current_user.branch == 'Both':
+        # Show all recent applications
+        recent_applications = Application.query.options(
+            joinedload(Application.course),
+            joinedload(Application.branch)
+        ).order_by(Application.created_at.desc()).limit(10).all()
+    else:
+        # Show only recent applications for user's branch
+        branch = Branch.query.filter_by(name=current_user.branch).first()
+        if branch:
+            recent_applications = Application.query.options(
+                joinedload(Application.course),
+                joinedload(Application.branch)
+            ).filter_by(branch_id=branch.id).order_by(Application.created_at.desc()).limit(10).all()
+        else:
+            recent_applications = []
     
     # Get upcoming lessons for instructors
-    if current_user.is_instructor:
+    if current_user.role == 'instructor':
         upcoming_lessons = Lesson.query.filter_by(
             instructor_id=current_user.id,
             status='scheduled'
-        ).filter(Lesson.scheduled_date >= datetime.utcnow().date())\
+        ).filter(Lesson.scheduled_date >= datetime.now(timezone.utc).date())\
          .order_by(Lesson.scheduled_date, Lesson.scheduled_time)\
          .limit(5).all()
     else:
         upcoming_lessons = []
     
-    # Get notifications
+    # Get notifications for the current admin
     notifications = Notification.query.filter_by(
         user_id=current_user.id,
         user_type='admin',
         is_read=False
     ).order_by(Notification.created_at.desc()).limit(10).all()
     
+    # Create stats dictionary with keys matching the template expectations
     stats = {
-        'total_applications': total_applications,
-        'pending_applications': pending_applications,
-        'accepted_applications': accepted_applications,
+        'total': total_applications,
+        'pending': pending_applications,
+        'accepted': accepted_applications,
+        'rejected': rejected_applications,
         'total_students': total_students,
         'active_students': active_students,
         'total_payments': total_payments
     }
+    
+    # Pass user's name to session for display in template
+    session['user_name'] = current_user.name
     
     return render_template('admin/dashboard.html',
                          stats=stats,
@@ -987,6 +1041,8 @@ def admin_dashboard():
                          recent_payments=recent_payments,
                          upcoming_lessons=upcoming_lessons,
                          notifications=notifications)
+
+
 
 @app.route('/admin/applications')
 @admin_required

@@ -76,7 +76,7 @@
                     <a href="/admin/applications?status=pending" class="sidebar-link flex items-center px-4 py-3 text-gray-300 rounded">
                         <i class="fas fa-clock w-6"></i>
                         <span>Pending</span>
-                        {% if stats and stats.pending > 0 %}
+                        {% if stats and stats.pending_applications > 0 %}
                         <span class="ml-auto bg-red-600 text-white text-xs px-2 py-1 rounded-full">{{ stats.pending }}</span>
                         {% endif %}
                     </a>
