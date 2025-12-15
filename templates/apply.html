@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% block title %}Apply Now - KEEM Driving School{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-section {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+    }
+    
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #374151;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.5rem;
+        transition: all 0.3s;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #dc2626;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+    
+    .required::after {
+        content: " *";
+        color: #dc2626;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 gradient-text">Apply to KEEM Driving School</h1>
+            <p class="text-gray-600 text-lg">Fill out the form below to start your driving journey</p>
+        </div>
+        
+        <div class="max-w-4xl mx-auto">
+            <form id="applicationForm" enctype="multipart/form-data">
+                <!-- Personal Information -->
+                <div class="form-section animate-fade-in">
+                    <h2 class="text-2xl font-bold mb-6 gradient-text flex items-center">
+                        <i class="fas fa-user mr-3"></i>
+                        Personal Information / Ama shiwi wakumine umuntu (Bemba) / Zambiri Za Inu (Nyanja)
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="form-label required">First Name / Izina Lyakutangulila</label>
+                            <input type="text" name="first_name" class="form-input" required>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label required">Last Name / Izina Lyakuleka</label>
+                            <input type="text" name="last_name" class="form-input" required>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label required">Email Address</label>
+                            <input type="email" name="email" class="form-input" required>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label required">Phone Number / Nambala Ya Foni</label>
+                            <input type="tel" name="phone" class="form-input" placeholder="+260" required>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label required">WhatsApp Number</label>
+                            <input type="tel" name="whatsapp" class="form-input" placeholder="+260" required>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label required">Date of Birth / Ubushiku Bwakwibuka</label>
+                            <input type="date" name="date_of_birth" class="form-input" required>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label required">Gender / Ubulume nangu Ubukashi</label>
+                            <select name="gender" class="form-input" required>
+                                <option value="">Select...</option>
+                                <option value="male">Male / Umulume</option>
+                                <option value="female">Female / Umukashi</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">NRC Number (Optional)</label>
+                            <input type="text" name="nrc_number" class="form-input" placeholder="123456/78/9">
+                        </div>
+                        
+                        <div class="md:col-span-2">
+                            <label class="form-label">Profile Photo / Cifunikisho (Optional)</label>
+                            <input type="file" name="profile_photo" class="form-input" accept="image/*">
+                            <p class="text-sm text-gray-500 mt-1">Max size: 5MB. Formats: JPG, PNG</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Address Information -->
+                <div class="form-section animate-fade-in">
+                    <h2 class="text-2xl font-bold mb-6 gradient-text flex items-center">
+                        <i class="fas fa-map-marker-alt mr-3"></i>
+                        Address Information / Ukwikala
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2">
+                            <label class="form-label required">Full Address / Icipataniko Conse</label>
+                            <textarea name="address" class="form-input" rows="3" required></textarea>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label required">City / Tauni</label>
+                            <input type="text" name="city" class="form-input" required>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label required">Province / Calo</label>
+                            <select name="province" class="form-input" required>
+                                <option value="">Select Province...</option>
+                                <option value="Central">Central</option>
+                                <option value="Copperbelt">Copperbelt</option>
+                                <option value="Eastern">Eastern</option>
+                                <option value="Luapula">Luapula</option>
+                                <option value="Lusaka">Lusaka</option>
+                                <option value="Muchinga">Muchinga</option>
+                                <option value="Northern">Northern</option>
+                                <option value="North-Western">North-Western</option>
+                                <option value="Southern">Southern</option>
+                                <option value="Western">Western</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Course Information -->
+                <div class="form-section animate-fade-in">
+                    <h2 class="text-2xl font-bold mb-6 gradient-text flex items-center">
+                        <i class="fas fa-graduation-cap mr-3"></i>
+                        Course Details / Ifintu Fya Course
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="form-label required">Preferred Branch / Branch Ukusala</label>
+                            <select name="branch" class="form-input" required>
+                                <option value="">Select Branch...</option>
+                                <option value="Luanshya">Luanshya Branch</option>
+                                <option value="Mufulira">Mufulira Branch</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label required">Course Type / Umulandu wa Course</label>
+                            <select name="course_type" class="form-input" required>
+                                <option value="">Select Course...</option>
+                                <option value="Class A - Motorcycle">Class A - Motorcycle License</option>
+                                <option value="Class B - Light Vehicle">Class B - Light Vehicle License</option>
+                                <option value="Class C - Heavy Vehicle">Class C - Heavy Vehicle License</option>
+                                <option value="Class D - PSV">Class D - PSV License</option>
+                                <option value="Refresher Course">Refresher Course</option>
+                                <option value="Defensive Driving">Defensive Driving</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label required">Preferred Language / Ululimi Lwakwe</label>
+                            <select name="preferred_language" class="form-input" required>
+                                <option value="English">English</option>
+                                <option value="Bemba">Bemba</option>
+                                <option value="Nyanja">Nyanja</option>
+                                <option value="Tonga">Tonga</option>
+                                <option value="Lozi">Lozi</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">Previous Driving Experience</label>
+                            <select name="previous_experience" class="form-input">
+                                <option value="None">None / Tawama</option>
+                                <option value="Beginner">Beginner / Ndetampila</option>
+                                <option value="Some">Some Experience / Nafwile</option>
+                                <option value="Experienced">Experienced / Ndashiba</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Emergency Contact -->
+                <div class="form-section animate-fade-in">
+                    <h2 class="text-2xl font-bold mb-6 gradient-text flex items-center">
+                        <i class="fas fa-phone-alt mr-3"></i>
+                        Emergency Contact / Uwakulandilako
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="form-label">Emergency Contact Name</label>
+                            <input type="text" name="emergency_contact_name" class="form-input">
+                        </div>
+                        
+                        <div>
+                            <label class="form-label">Emergency Contact Phone</label>
+                            <input type="tel" name="emergency_contact_phone" class="form-input" placeholder="+260">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Additional Information -->
+                <div class="form-section animate-fade-in">
+                    <h2 class="text-2xl font-bold mb-6 gradient-text flex items-center">
+                        <i class="fas fa-info-circle mr-3"></i>
+                        Additional Information
+                    </h2>
+                    
+                    <div>
+                        <label class="form-label">Medical Conditions (if any)</label>
+                        <textarea name="medical_conditions" class="form-input" rows="3" placeholder="Please list any medical conditions we should be aware of..."></textarea>
+                        <p class="text-sm text-gray-500 mt-1">This information is confidential and will only be used for your safety.</p>
+                    </div>
+                </div>
+                
+                <!-- Terms and Conditions -->
+                <div class="form-section animate-fade-in">
+                    <div class="flex items-start">
+                        <input type="checkbox" id="terms" class="mt-1 mr-3" required>
+                        <label for="terms" class="text-sm text-gray-600">
+                            I agree to the <a href="#" class="text-red-600 hover:underline">Terms and Conditions</a> and confirm that all information provided is accurate. I understand that KEEM Driving School will process my application and contact me via email, phone, or WhatsApp.
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn-primary text-white px-12 py-4 rounded-full font-bold text-lg hover-scale">
+                        <span id="submitText">Submit Application</span>
+                        <span id="submitLoader" class="hidden">
+                            <i class="fas fa-spinner fa-spin mr-2"></i>Processing...
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Success Modal -->
+<div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-2xl p-8 max-w-md mx-4 animate-fade-in">
+        <div class="text-center">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check text-green-600 text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Application Submitted!</h3>
+            <p class="text-gray-600 mb-6">Your application has been received successfully. We will review it and get back to you within 2-3 business days.</p>
+            <p class="text-sm text-gray-500 mb-6">Application ID: <span id="applicationId" class="font-bold"></span></p>
+            <button onclick="window.location.href='/'" class="btn-primary text-white px-8 py-3 rounded-full font-semibold w-full">
+                Back to Home
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const submitText = document.getElementById('submitText');
+    const submitLoader = document.getElementById('submitLoader');
+    
+    // Disable button and show loader
+    submitBtn.disabled = true;
+    submitText.classList.add('hidden');
+    submitLoader.classList.remove('hidden');
+    
+    const formData = new FormData(e.target);
+    
+    try {
+        const response = await fetch('/submit-application', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('applicationId').textContent = result.application_id;
+            document.getElementById('successModal').classList.remove('hidden');
+            document.getElementById('successModal').classList.add('flex');
+            e.target.reset();
+        } else {
+            alert('Error: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    } finally {
+        submitBtn.disabled = false;
+        submitText.classList.remove('hidden');
+        submitLoader.classList.add('hidden');
+    }
+});
+</script>
+{% endblock %}

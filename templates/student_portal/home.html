@@ -1,0 +1,360 @@
+{% extends "base.html" %}
+
+{% block title %}Student Portal - KEEM Driving School{% endblock %}
+
+{% block extra_css %}
+<style>
+    .portal-card {
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .portal-card:hover {
+        transform: translateY(-10px);
+        border-color: #dc2626;
+        box-shadow: 0 20px 40px rgba(220, 38, 38, 0.1);
+    }
+    
+    .portal-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .feature-list li {
+        margin-bottom: 0.75rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+    
+    .feature-list li:before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #10b981;
+        font-weight: bold;
+    }
+    
+    .portal-step {
+        position: relative;
+        padding-left: 3rem;
+        margin-bottom: 2rem;
+    }
+    
+    .portal-step:before {
+        content: attr(data-step);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 2.5rem;
+        height: 2.5rem;
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="gradient-bg text-white py-20">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <h1 class="text-5xl font-bold mb-6">Student Portal</h1>
+            <p class="text-xl text-gray-200 mb-8">Your gateway to course management, progress tracking, and resources</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/student-portal/login" class="bg-white text-red-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition hover-scale text-center">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Login to Portal
+                </a>
+                <a href="/student-portal/register" class="border-2 border-white text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-red-600 transition text-center">
+                    <i class="fas fa-user-plus mr-2"></i>Register Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Portal Features -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">Portal Features</h2>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="portal-card text-center">
+                <div class="portal-icon gradient-bg mx-auto">
+                    <i class="fas fa-chart-line text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Track Progress</h3>
+                <p class="text-gray-600">
+                    Monitor your course completion, lesson progress, and exam preparation in real-time
+                </p>
+            </div>
+            
+            <div class="portal-card text-center">
+                <div class="portal-icon bg-green-100 mx-auto">
+                    <i class="fas fa-calendar-alt text-green-600 text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Schedule Management</h3>
+                <p class="text-gray-600">
+                    View upcoming lessons, reschedule sessions, and manage your training schedule
+                </p>
+            </div>
+            
+            <div class="portal-card text-center">
+                <div class="portal-icon bg-blue-100 mx-auto">
+                    <i class="fas fa-file-invoice-dollar text-blue-600 text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Payment History</h3>
+                <p class="text-gray-600">
+                    Access payment records, download receipts, and track your financial transactions
+                </p>
+            </div>
+            
+            <div class="portal-card text-center">
+                <div class="portal-icon bg-purple-100 mx-auto">
+                    <i class="fas fa-file-download text-purple-600 text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Document Library</h3>
+                <p class="text-gray-600">
+                    Download course materials, certificates, and important documents anytime
+                </p>
+            </div>
+            
+            <div class="portal-card text-center">
+                <div class="portal-icon bg-yellow-100 mx-auto">
+                    <i class="fas fa-user-circle text-yellow-600 text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Profile Management</h3>
+                <p class="text-gray-600">
+                    Update your contact information, view personal details, and manage preferences
+                </p>
+            </div>
+            
+            <div class="portal-card text-center">
+                <div class="portal-icon bg-red-100 mx-auto">
+                    <i class="fas fa-question-circle text-red-600 text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Support Center</h3>
+                <p class="text-gray-600">
+                    Get help, submit inquiries, and access frequently asked questions
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How to Access -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">How to Access the Portal</h2>
+        
+        <div class="max-w-3xl mx-auto">
+            <div class="portal-step" data-step="1">
+                <h3 class="text-xl font-bold mb-3">Register for Portal Access</h3>
+                <p class="text-gray-600">
+                    Click the "Register Now" button and provide your student number, email, and date of birth for verification.
+                </p>
+            </div>
+            
+            <div class="portal-step" data-step="2">
+                <h3 class="text-xl font-bold mb-3">Receive Access Code</h3>
+                <p class="text-gray-600">
+                    After verification, you'll receive an access code via email and WhatsApp. Keep this code secure.
+                </p>
+            </div>
+            
+            <div class="portal-step" data-step="3">
+                <h3 class="text-xl font-bold mb-3">Login to Portal</h3>
+                <p class="text-gray-600">
+                    Use your student number and access code to login and access all portal features.
+                </p>
+            </div>
+            
+            <div class="portal-step" data-step="4">
+                <h3 class="text-xl font-bold mb-3">Explore Features</h3>
+                <p class="text-gray-600">
+                    Access your dashboard, track progress, view schedules, and manage your documents.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Student Benefits -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">Student Benefits</h2>
+        
+        <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                        <i class="fas fa-clock text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">24/7 Access</h3>
+                    <p class="text-gray-600">
+                        Access your information anytime, anywhere. No need to visit the office for updates.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                        <i class="fas fa-bell text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Real-time Notifications</h3>
+                    <p class="text-gray-600">
+                        Get instant updates on schedule changes, payment confirmations, and important announcements.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                        <i class="fas fa-chart-bar text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Progress Analytics</h3>
+                    <p class="text-gray-600">
+                        Visual charts and reports showing your learning progress and areas for improvement.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                        <i class="fas fa-mobile-alt text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Mobile Friendly</h3>
+                    <p class="text-gray-600">
+                        Access the portal on any device - smartphone, tablet, or computer.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Secure & Private</h3>
+                    <p class="text-gray-600">
+                        Your data is protected with bank-level security and encryption.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="flex items-start space-x-4">
+                <div class="flex-shrink-0">
+                    <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center">
+                        <i class="fas fa-headset text-white"></i>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-2">Support Available</h3>
+                    <p class="text-gray-600">
+                        Dedicated support team ready to help with any portal-related issues.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Security Information -->
+<section class="py-16 bg-gray-900 text-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-6">Security First</h2>
+            <p class="text-gray-300 mb-8">
+                We take your security seriously. The portal uses advanced encryption and security measures to protect your data.
+            </p>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-8">
+                <div class="p-6 bg-gray-800 rounded-xl">
+                    <i class="fas fa-lock text-3xl text-green-400 mb-4"></i>
+                    <h4 class="font-bold mb-2">End-to-End Encryption</h4>
+                    <p class="text-gray-400 text-sm">All data transmitted is fully encrypted</p>
+                </div>
+                
+                <div class="p-6 bg-gray-800 rounded-xl">
+                    <i class="fas fa-user-shield text-3xl text-blue-400 mb-4"></i>
+                    <h4 class="font-bold mb-2">Two-Factor Authentication</h4>
+                    <p class="text-gray-400 text-sm">Optional extra layer of security</p>
+                </div>
+                
+                <div class="p-6 bg-gray-800 rounded-xl">
+                    <i class="fas fa-history text-3xl text-yellow-400 mb-4"></i>
+                    <h4 class="font-bold mb-2">Activity Logging</h4>
+                    <p class="text-gray-400 text-sm">Track all portal access and changes</p>
+                </div>
+            </div>
+            
+            <div class="text-sm text-gray-400">
+                <p><i class="fas fa-info-circle mr-2"></i>Never share your access code with anyone</p>
+                <p><i class="fas fa-info-circle mr-2"></i>Log out after each session</p>
+                <p><i class="fas fa-info-circle mr-2"></i>Report any suspicious activity immediately</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 gradient-bg text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold mb-6">Ready to Access Your Portal?</h2>
+        <p class="text-xl mb-8 text-gray-200">Join thousands of students using our portal to enhance their learning experience</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/student-portal/login" class="bg-white text-red-600 px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition hover-scale">
+                <i class="fas fa-sign-in-alt mr-2"></i>Login Now
+            </a>
+            <a href="/student-portal/register" class="border-2 border-white text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-red-600 transition">
+                <i class="fas fa-user-plus mr-2"></i>Register Here
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Links -->
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <h3 class="text-2xl font-bold mb-8 gradient-text">Quick Links</h3>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="/check-student-status" class="px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition hover:text-red-600">
+                    <i class="fas fa-search mr-2"></i>Check Student Status
+                </a>
+                <a href="/apply" class="px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition hover:text-red-600">
+                    <i class="fas fa-edit mr-2"></i>Apply for Course
+                </a>
+                <a href="/contact" class="px-6 py-3 bg-white rounded-full shadow-md hover:shadow-lg transition hover:text-red-600">
+                    <i class="fas fa-question-circle mr-2"></i>Need Help?
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

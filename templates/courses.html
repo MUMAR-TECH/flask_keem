@@ -1,0 +1,723 @@
+{% extends "base.html" %}
+
+{% block title %}Courses - KEEM Driving School{% endblock %}
+
+{% block extra_css %}
+<style>
+    .course-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 2px solid transparent;
+    }
+    
+    .course-card:hover {
+        transform: translateY(-10px);
+        border-color: #dc2626;
+        box-shadow: 0 20px 40px rgba(220, 38, 38, 0.15);
+    }
+    
+    .course-header {
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .course-header:before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .course-popular {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #fbbf24;
+        color: #92400e;
+        font-size: 0.75rem;
+        font-weight: bold;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+    }
+    
+    .course-price {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 1rem 0;
+    }
+    
+    .course-duration {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        opacity: 0.9;
+    }
+    
+    .feature-list {
+        padding: 1.5rem;
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+    
+    .feature-item i {
+        color: #10b981;
+        margin-right: 0.75rem;
+        margin-top: 0.25rem;
+    }
+    
+    .filter-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .filter-tab {
+        padding: 0.5rem 1.5rem;
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 9999px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .filter-tab:hover,
+    .filter-tab.active {
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+        border-color: transparent;
+    }
+    
+    .category-badge {
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        background: white;
+        color: #dc2626;
+        font-size: 0.75rem;
+        font-weight: bold;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        z-index: 10;
+    }
+    
+    .comparison-table {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    .comparison-table th {
+        background: #f9fafb;
+        font-weight: 600;
+        padding: 1rem;
+        text-align: left;
+    }
+    
+    .comparison-table td {
+        padding: 1rem;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .comparison-table tr:last-child td {
+        border-bottom: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="gradient-bg text-white py-16">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <h1 class="text-5xl font-bold mb-4">Our Driving Courses</h1>
+            <p class="text-xl text-gray-200">Choose from a range of professional driving courses designed for every level</p>
+        </div>
+    </div>
+</section>
+
+<!-- Course Filter -->
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-8 text-center gradient-text">Find Your Perfect Course</h2>
+        
+        <div class="max-w-4xl mx-auto">
+            <!-- Category Tabs -->
+            <div class="filter-tabs justify-center">
+                <button class="filter-tab active" data-category="all">All Courses</button>
+                <button class="filter-tab" data-category="motorcycle">Motorcycle</button>
+                <button class="filter-tab" data-category="light-vehicle">Light Vehicle</button>
+                <button class="filter-tab" data-category="heavy-vehicle">Heavy Vehicle</button>
+                <button class="filter-tab" data-category="specialized">Specialized</button>
+            </div>
+            
+            <!-- Search and Sort -->
+            <div class="flex flex-col md:flex-row gap-4 mb-8">
+                <div class="flex-1 relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" placeholder="Search courses..." class="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-red-600 focus:outline-none">
+                </div>
+                <select class="border-2 border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:border-red-600">
+                    <option value="popular">Most Popular</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="duration">Duration</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Courses Grid -->
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Class A - Motorcycle -->
+            <div class="course-card" data-category="motorcycle">
+                <div class="category-badge">Class A</div>
+                <div class="course-header">
+                    <h3 class="text-2xl font-bold">Motorcycle License</h3>
+                    <p class="text-red-100 mt-2">Complete motorcycle training course</p>
+                    <div class="course-price">K1,500</div>
+                    <div class="course-duration">
+                        <i class="far fa-clock"></i>
+                        <span>4 Weeks • 40 Hours</span>
+                    </div>
+                </div>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Basic motorcycle operation and control</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Traffic rules and road safety</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Defensive riding techniques</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Practical on-road training</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>License test preparation</span>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <a href="/apply?course=class_a" class="block w-full bg-red-600 text-white text-center py-3 rounded-lg font-bold hover:bg-red-700 transition">
+                            Apply Now
+                        </a>
+                        <a href="/course/1" class="block w-full text-center text-red-600 py-2 font-medium hover:text-red-700 transition mt-2">
+                            Learn More <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Class B - Light Vehicle (Most Popular) -->
+            <div class="course-card" data-category="light-vehicle">
+                <div class="category-badge">Class B</div>
+                <div class="course-popular">MOST POPULAR</div>
+                <div class="course-header">
+                    <h3 class="text-2xl font-bold">Light Vehicle License</h3>
+                    <p class="text-red-100 mt-2">Comprehensive car driving course</p>
+                    <div class="course-price">K2,500</div>
+                    <div class="course-duration">
+                        <i class="far fa-clock"></i>
+                        <span>6 Weeks • 60 Hours</span>
+                    </div>
+                </div>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Complete car driving fundamentals</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Advanced driving techniques</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Parking and maneuvering skills</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Highway and night driving</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Emergency handling procedures</span>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <a href="/apply?course=class_b" class="block w-full bg-red-600 text-white text-center py-3 rounded-lg font-bold hover:bg-red-700 transition">
+                            Apply Now
+                        </a>
+                        <a href="/course/2" class="block w-full text-center text-red-600 py-2 font-medium hover:text-red-700 transition mt-2">
+                            Learn More <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Class C - Heavy Vehicle -->
+            <div class="course-card" data-category="heavy-vehicle">
+                <div class="category-badge">Class C</div>
+                <div class="course-header">
+                    <h3 class="text-2xl font-bold">Heavy Vehicle License</h3>
+                    <p class="text-red-100 mt-2">Professional truck and bus training</p>
+                    <div class="course-price">K3,500</div>
+                    <div class="course-duration">
+                        <i class="far fa-clock"></i>
+                        <span>8 Weeks • 80 Hours</span>
+                    </div>
+                </div>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Heavy vehicle operation</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Load management and safety</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Route planning and logistics</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Vehicle maintenance basics</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Commercial driving regulations</span>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <a href="/apply?course=class_c" class="block w-full bg-red-600 text-white text-center py-3 rounded-lg font-bold hover:bg-red-700 transition">
+                            Apply Now
+                        </a>
+                        <a href="/course/3" class="block w-full text-center text-red-600 py-2 font-medium hover:text-red-700 transition mt-2">
+                            Learn More <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Class D - PSV -->
+            <div class="course-card" data-category="specialized">
+                <div class="category-badge">Class D</div>
+                <div class="course-header">
+                    <h3 class="text-2xl font-bold">PSV License</h3>
+                    <p class="text-red-100 mt-2">Public Service Vehicle training</p>
+                    <div class="course-price">K3,000</div>
+                    <div class="course-duration">
+                        <i class="far fa-clock"></i>
+                        <span>6 Weeks • 60 Hours</span>
+                    </div>
+                </div>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Passenger safety protocols</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Customer service excellence</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Route operation management</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Emergency evacuation procedures</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>PSV regulations and compliance</span>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <a href="/apply?course=class_d" class="block w-full bg-red-600 text-white text-center py-3 rounded-lg font-bold hover:bg-red-700 transition">
+                            Apply Now
+                        </a>
+                        <a href="/course/4" class="block w-full text-center text-red-600 py-2 font-medium hover:text-red-700 transition mt-2">
+                            Learn More <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Refresher Course -->
+            <div class="course-card" data-category="specialized">
+                <div class="category-badge">Special</div>
+                <div class="course-header">
+                    <h3 class="text-2xl font-bold">Refresher Course</h3>
+                    <p class="text-red-100 mt-2">Skill enhancement for experienced drivers</p>
+                    <div class="course-price">K1,200</div>
+                    <div class="course-duration">
+                        <i class="far fa-clock"></i>
+                        <span>2 Weeks • 20 Hours</span>
+                    </div>
+                </div>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Advanced driving techniques</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Defensive driving update</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>New traffic laws and regulations</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Emergency response training</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Confidence building sessions</span>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <a href="/apply?course=refresher" class="block w-full bg-red-600 text-white text-center py-3 rounded-lg font-bold hover:bg-red-700 transition">
+                            Apply Now
+                        </a>
+                        <a href="/course/5" class="block w-full text-center text-red-600 py-2 font-medium hover:text-red-700 transition mt-2">
+                            Learn More <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Defensive Driving -->
+            <div class="course-card" data-category="specialized">
+                <div class="category-badge">Special</div>
+                <div class="course-header">
+                    <h3 class="text-2xl font-bold">Defensive Driving</h3>
+                    <p class="text-red-100 mt-2">Advanced safety and accident prevention</p>
+                    <div class="course-price">K2,000</div>
+                    <div class="course-duration">
+                        <i class="far fa-clock"></i>
+                        <span>3 Weeks • 30 Hours</span>
+                    </div>
+                </div>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Accident prevention techniques</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Hazard perception training</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Emergency vehicle control</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Adverse weather driving</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Risk assessment and management</span>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <a href="/apply?course=defensive" class="block w-full bg-red-600 text-white text-center py-3 rounded-lg font-bold hover:bg-red-700 transition">
+                            Apply Now
+                        </a>
+                        <a href="/course/6" class="block w-full text-center text-red-600 py-2 font-medium hover:text-red-700 transition mt-2">
+                            Learn More <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Course Comparison -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-12 text-center gradient-text">Course Comparison</h2>
+        
+        <div class="overflow-x-auto">
+            <table class="comparison-table w-full">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Class A (Motorcycle)</th>
+                        <th>Class B (Car)</th>
+                        <th>Class C (Heavy)</th>
+                        <th>Class D (PSV)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-medium">Duration</td>
+                        <td>4 Weeks</td>
+                        <td>6 Weeks</td>
+                        <td>8 Weeks</td>
+                        <td>6 Weeks</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium">Total Hours</td>
+                        <td>40 Hours</td>
+                        <td>60 Hours</td>
+                        <td>80 Hours</td>
+                        <td>60 Hours</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium">Theory Classes</td>
+                        <td>10 Hours</td>
+                        <td>20 Hours</td>
+                        <td>25 Hours</td>
+                        <td>20 Hours</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium">Practical Training</td>
+                        <td>30 Hours</td>
+                        <td>40 Hours</td>
+                        <td>55 Hours</td>
+                        <td>40 Hours</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium">Minimum Age</td>
+                        <td>16 Years</td>
+                        <td>18 Years</td>
+                        <td>21 Years</td>
+                        <td>21 Years</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium">Fee</td>
+                        <td>K1,500</td>
+                        <td>K2,500</td>
+                        <td>K3,500</td>
+                        <td>K3,000</td>
+                    </tr>
+                    <tr>
+                        <td class="font-medium">Documents Required</td>
+                        <td>NRC, 2 Photos</td>
+                        <td>NRC, 2 Photos, Medical</td>
+                        <td>NRC, 4 Photos, Medical</td>
+                        <td>NRC, 4 Photos, Police Clearance</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Our Courses -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-12 text-center gradient-text">Why Choose Our Courses?</h2>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="text-center">
+                <div class="w-16 h-16 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-certificate text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Certified Training</h3>
+                <p class="text-gray-600">All courses are RTSA approved and nationally recognized</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-chart-line text-green-600 text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">High Pass Rate</h3>
+                <p class="text-gray-600">95% of our students pass their driving tests on first attempt</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user-tie text-blue-600 text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Expert Instructors</h3>
+                <p class="text-gray-600">Learn from certified professionals with years of experience</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-car text-purple-600 text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Modern Fleet</h3>
+                <p class="text-gray-600">Well-maintained vehicles with dual controls for safety</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold mb-12 text-center gradient-text">Frequently Asked Questions</h2>
+        
+        <div class="max-w-3xl mx-auto space-y-4">
+            <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-50 transition">
+                    <span>What documents do I need to apply?</span>
+                    <i class="fas fa-chevron-down text-red-600 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t border-gray-200">
+                    <p class="text-gray-600">
+                        You'll need your NRC (National Registration Card), 2 passport-sized photographs, 
+                        and a medical fitness certificate (for Classes B, C, and D). For PSV license, 
+                        you also need a police clearance certificate.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-50 transition">
+                    <span>Do you offer payment plans?</span>
+                    <i class="fas fa-chevron-down text-red-600 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t border-gray-200">
+                    <p class="text-gray-600">
+                        Yes! We offer flexible payment options including full payment (with 5% discount), 
+                        monthly installments, and a 50% deposit plan. Contact us to discuss which plan works best for you.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-50 transition">
+                    <span>Can I choose my training schedule?</span>
+                    <i class="fas fa-chevron-down text-red-600 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t border-gray-200">
+                    <p class="text-gray-600">
+                        Absolutely! We offer morning (8 AM - 12 PM), afternoon (1 PM - 5 PM), and weekend 
+                        classes to accommodate your schedule. During enrollment, you can discuss your preferred times.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-50 transition">
+                    <span>What if I fail the driving test?</span>
+                    <i class="fas fa-chevron-down text-red-600 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t border-gray-200">
+                    <p class="text-gray-600">
+                        We provide free retraining for students who don't pass on their first attempt. 
+                        You can take additional practice sessions and retake the test without extra charge 
+                        (within 3 months of course completion).
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 gradient-bg text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold mb-6">Ready to Start Your Driving Journey?</h2>
+        <p class="text-xl mb-8 text-gray-200">Choose a course and apply today. Limited seats available!</p>
+        <a href="/apply" class="bg-white text-red-600 px-12 py-5 rounded-full font-bold text-lg hover:bg-gray-100 transition hover-scale inline-block">
+            Apply Now <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+        <p class="mt-4 text-red-100">
+            <i class="fas fa-phone mr-2"></i>Need help choosing? Call us: +260 XXX XXXXXX
+        </p>
+    </div>
+</section>
+
+<script>
+// Course filtering
+document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        // Update active tab
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        
+        const category = this.dataset.category;
+        
+        // Filter courses
+        document.querySelectorAll('.course-card').forEach(card => {
+            if (category === 'all' || card.dataset.category === category) {
+                card.style.display = 'block';
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100);
+            } else {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.display = 'none';
+                }, 300);
+            }
+        });
+    });
+});
+
+// FAQ Toggle
+document.querySelectorAll('.faq-toggle').forEach(button => {
+    button.addEventListener('click', function() {
+        const content = this.nextElementSibling;
+        const icon = this.querySelector('i');
+        
+        content.classList.toggle('hidden');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
+    });
+});
+
+// Search functionality
+const searchInput = document.querySelector('input[placeholder="Search courses..."]');
+searchInput.addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    
+    document.querySelectorAll('.course-card').forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const description = card.querySelector('p').textContent.toLowerCase();
+        
+        if (title.includes(searchTerm) || description.includes(searchTerm)) {
+            card.style.display = 'block';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        } else {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.display = 'none';
+            }, 300);
+        }
+    });
+});
+</script>
+{% endblock %}

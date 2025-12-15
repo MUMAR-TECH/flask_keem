@@ -1,0 +1,849 @@
+{% extends "base.html" %}
+
+{% block title %}Lesson Schedule - Student Portal | KEEM Driving School{% endblock %}
+
+{% block extra_css %}
+<style>
+    .schedule-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+    
+    .schedule-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(220, 38, 38, 0.15);
+    }
+    
+    .lesson-time {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        font-weight: bold;
+    }
+    
+    .lesson-upcoming {
+        border-left: 5px solid #3b82f6;
+    }
+    
+    .lesson-completed {
+        border-left: 5px solid #10b981;
+        opacity: 0.8;
+    }
+    
+    .lesson-cancelled {
+        border-left: 5px solid #ef4444;
+        opacity: 0.6;
+    }
+    
+    .calendar-day {
+        width: 100%;
+        aspect-ratio: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .calendar-day:hover {
+        background: #f3f4f6;
+    }
+    
+    .calendar-day.active {
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+    }
+    
+    .calendar-day.has-lesson {
+        background: #dbeafe;
+        color: #1e40af;
+        font-weight: bold;
+    }
+    
+    .calendar-day.has-lesson.active {
+        background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+        color: white;
+    }
+    
+    .status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .status-scheduled {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .status-completed {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .status-cancelled {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    
+    .filter-btn {
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+        border-color: transparent;
+    }
+    
+    .lesson-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+    
+    .type-theory {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    
+    .type-practical {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .type-exam {
+        background: #ede9fe;
+        color: #5b21b6;
+    }
+    
+    .type-simulator {
+        background: #fce7f3;
+        color: #9d174d;
+    }
+    
+    .calendar-header {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        text-align: center;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: 0.5rem;
+    }
+    
+    .calendar-body {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .month-navigation {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+    
+    .lesson-details {
+        background: #f9fafb;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 1rem;
+        border-left: 4px solid #3b82f6;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+            <div>
+                <h1 class="text-3xl font-bold gradient-text mb-2">Lesson Schedule</h1>
+                <p class="text-gray-600">Track your driving lessons and manage your schedule</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex items-center gap-4">
+                <a href="/student-portal/dashboard" class="flex items-center gap-2 text-red-600 hover:text-red-700 font-medium">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <button onclick="printSchedule()" class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+                    <i class="fas fa-print"></i> Print
+                </button>
+            </div>
+        </div>
+        
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="schedule-card text-center">
+                <div class="text-3xl font-bold text-blue-600 mb-2">{{ total_lessons }}</div>
+                <p class="text-gray-600">Total Lessons</p>
+            </div>
+            <div class="schedule-card text-center">
+                <div class="text-3xl font-bold text-green-600 mb-2">{{ completed_lessons|length }}</div>
+                <p class="text-gray-600">Completed</p>
+            </div>
+            <div class="schedule-card text-center">
+                <div class="text-3xl font-bold text-yellow-600 mb-2">{{ upcoming_lessons|length }}</div>
+                <p class="text-gray-600">Upcoming</p>
+            </div>
+            <div class="schedule-card text-center">
+                <div class="text-3xl font-bold text-red-600 mb-2">{{ cancelled_lessons|length }}</div>
+                <p class="text-gray-600">Cancelled</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column - Calendar & Filters -->
+        <div class="space-y-6">
+            <!-- Calendar -->
+            <div class="schedule-card">
+                <div class="month-navigation">
+                    <button onclick="previousMonth()" class="p-2 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <h3 class="text-lg font-bold gradient-text" id="currentMonth">{{ current_month }}</h3>
+                    <button onclick="nextMonth()" class="p-2 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <div class="calendar-header">
+                    <div>Sun</div>
+                    <div>Mon</div>
+                    <div>Tue</div>
+                    <div>Wed</div>
+                    <div>Thu</div>
+                    <div>Fri</div>
+                    <div>Sat</div>
+                </div>
+                
+                <div class="calendar-body" id="calendarDays">
+                    <!-- Calendar days will be populated by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div class="schedule-card">
+                <h3 class="font-bold text-lg mb-4">Filter Lessons</h3>
+                <div class="space-y-3">
+                    <div class="flex flex-wrap gap-2">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+                        <button class="filter-btn" data-filter="completed">Completed</button>
+                        <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Lesson Type</label>
+                        <div class="flex flex-wrap gap-2">
+                            <button class="filter-btn" data-type="all">All Types</button>
+                            <button class="filter-btn" data-type="theory">Theory</button>
+                            <button class="filter-btn" data-type="practical">Practical</button>
+                            <button class="filter-btn" data-type="exam">Exam</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Select Date Range</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="date" id="dateFrom" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-red-600">
+                            <input type="date" id="dateTo" class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-red-600">
+                        </div>
+                    </div>
+                    
+                    <button onclick="applyFilters()" class="w-full mt-4 gradient-bg text-white py-2 rounded-lg font-semibold hover:opacity-90 transition">
+                        <i class="fas fa-filter mr-2"></i> Apply Filters
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="schedule-card">
+                <h3 class="font-bold text-lg mb-4">Quick Actions</h3>
+                <div class="space-y-3">
+                    <button onclick="requestReschedule()" class="w-full text-left p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-calendar-alt text-blue-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Request Reschedule</p>
+                                <p class="text-sm text-gray-600">Need to change a lesson time?</p>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="downloadSchedule()" class="w-full text-left p-3 bg-green-50 rounded-lg hover:bg-green-100 transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-file-download text-green-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Download Schedule</p>
+                                <p class="text-sm text-gray-600">Get PDF of your lesson plan</p>
+                            </div>
+                        </div>
+                    </button>
+                    
+                    <button onclick="showInstructorInfo()" class="w-full text-left p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-tie text-purple-600"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">Instructor Info</p>
+                                <p class="text-sm text-gray-600">View instructor contact details</p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Column - Lessons List -->
+        <div class="lg:col-span-2">
+            <!-- Lesson Count and Filter Status -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold gradient-text">Lessons</h2>
+                <div class="text-gray-600" id="lessonCount">
+                    {{ lessons|length }} lessons found
+                </div>
+            </div>
+            
+            <!-- Lessons List -->
+            <div id="lessonsList" class="space-y-4">
+                {% if lessons %}
+                    {% for lesson in lessons %}
+                    <div class="schedule-card {% if lesson.status == 'completed' %}lesson-completed{% elif lesson.status == 'cancelled' %}lesson-cancelled{% else %}lesson-upcoming{% endif %}" data-date="{{ lesson.scheduled_date.strftime('%Y-%m-%d') }}" data-type="{{ lesson.lesson_type }}" data-status="{{ lesson.status }}">
+                        <div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-start gap-4 mb-3">
+                                    <div class="lesson-time">
+                                        <div class="text-sm">{{ lesson.scheduled_date.strftime('%b %d') }}</div>
+                                        <div>{{ lesson.scheduled_time.strftime('%I:%M %p') }}</div>
+                                    </div>
+                                    
+                                    <div>
+                                        <h3 class="font-bold text-lg text-gray-800 mb-1">{{ lesson.title }}</h3>
+                                        <div class="flex flex-wrap items-center gap-2 mb-3">
+                                            {% if lesson.lesson_type == 'theory' %}
+                                            <span class="lesson-type type-theory">
+                                                <i class="fas fa-book"></i> Theory
+                                            </span>
+                                            {% elif lesson.lesson_type == 'practical' %}
+                                            <span class="lesson-type type-practical">
+                                                <i class="fas fa-car"></i> Practical
+                                            </span>
+                                            {% elif lesson.lesson_type == 'exam' %}
+                                            <span class="lesson-type type-exam">
+                                                <i class="fas fa-file-alt"></i> Exam
+                                            </span>
+                                            {% else %}
+                                            <span class="lesson-type type-simulator">
+                                                <i class="fas fa-desktop"></i> Simulator
+                                            </span>
+                                            {% endif %}
+                                            
+                                            {% if lesson.status == 'scheduled' %}
+                                            <span class="status-badge status-scheduled">
+                                                <i class="fas fa-clock mr-1"></i> Scheduled
+                                            </span>
+                                            {% elif lesson.status == 'completed' %}
+                                            <span class="status-badge status-completed">
+                                                <i class="fas fa-check-circle mr-1"></i> Completed
+                                            </span>
+                                            {% elif lesson.status == 'cancelled' %}
+                                            <span class="status-badge status-cancelled">
+                                                <i class="fas fa-times-circle mr-1"></i> Cancelled
+                                            </span>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        {% if lesson.instructor_rel %}
+                                        <div class="text-sm text-gray-600">
+                                            <i class="fas fa-user-tie mr-2"></i>Instructor: {{ lesson.instructor_rel.name }}
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if lesson.location %}
+                                        <div class="text-sm text-gray-600">
+                                            <i class="fas fa-map-marker-alt mr-2"></i>Location: {{ lesson.location }}
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if lesson.vehicle_used %}
+                                        <div class="text-sm text-gray-600">
+                                            <i class="fas fa-car mr-2"></i>Vehicle: {{ lesson.vehicle_used }}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                {% if lesson.description %}
+                                <div class="lesson-details">
+                                    <p class="text-sm text-gray-700">{{ lesson.description }}</p>
+                                </div>
+                                {% endif %}
+                                
+                                {% if lesson.materials %}
+                                <div class="mt-3">
+                                    <p class="text-sm font-medium text-gray-700 mb-1">Required Materials:</p>
+                                    <p class="text-sm text-gray-600">{{ lesson.materials }}</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                            
+                            {% if lesson.status == 'scheduled' %}
+                            <div class="flex flex-col gap-2">
+                                <button onclick="confirmAttendance('{{ lesson.id }}')" class="px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition">
+                                    <i class="fas fa-check mr-2"></i> Confirm
+                                </button>
+                                <button onclick="requestRescheduleLesson('{{ lesson.id }}')" class="px-4 py-2 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 transition">
+                                    <i class="fas fa-exchange-alt mr-2"></i> Reschedule
+                                </button>
+                                {% if lesson.can_cancel %}
+                                <button onclick="cancelLesson('{{ lesson.id }}')" class="px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition">
+                                    <i class="fas fa-times mr-2"></i> Cancel
+                                </button>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        {% if lesson.feedback or lesson.score %}
+                        <div class="mt-4 pt-4 border-t border-gray-100">
+                            {% if lesson.score %}
+                            <div class="mb-2">
+                                <span class="font-medium text-gray-700">Score:</span>
+                                <span class="ml-2 px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-bold">
+                                    {{ lesson.score }}/100
+                                </span>
+                            </div>
+                            {% endif %}
+                            
+                            {% if lesson.feedback %}
+                            <div>
+                                <span class="font-medium text-gray-700">Instructor Feedback:</span>
+                                <p class="text-sm text-gray-600 mt-1">{{ lesson.feedback }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="schedule-card text-center py-12">
+                    <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-calendar-times text-gray-400 text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-700 mb-2">No Lessons Found</h3>
+                    <p class="text-gray-600 mb-6">You don't have any lessons scheduled for the selected period.</p>
+                    <button onclick="contactInstructor()" class="gradient-bg text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition">
+                        <i class="fas fa-user-tie mr-2"></i> Contact Instructor
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Pagination -->
+            <div class="mt-8 flex justify-center">
+                <div class="flex space-x-2">
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>
+                        Previous
+                    </button>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 bg-gray-100">
+                        1
+                    </button>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        2
+                    </button>
+                    <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                        Next
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Legend -->
+            <div class="mt-8 p-4 bg-gray-50 rounded-xl">
+                <h4 class="font-bold text-gray-700 mb-3">Schedule Legend</h4>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 bg-blue-500 rounded"></div>
+                        <span class="text-sm text-gray-600">Upcoming</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 bg-green-500 rounded"></div>
+                        <span class="text-sm text-gray-600">Completed</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 bg-red-500 rounded"></div>
+                        <span class="text-sm text-gray-600">Cancelled</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <div class="w-4 h-4 bg-yellow-500 rounded"></div>
+                        <span class="text-sm text-gray-600">Requires Action</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Templates -->
+<div id="rescheduleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full animate-fade-in">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold gradient-text">Reschedule Lesson</h3>
+            <button onclick="hideModal('rescheduleModal')" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="space-y-4">
+            <p class="text-gray-600" id="rescheduleLessonTitle"></p>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">New Date</label>
+                <input type="date" id="newDate" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-red-600">
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Preferred Time</label>
+                <select id="newTime" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-red-600">
+                    <option value="morning">Morning (8:00 AM - 12:00 PM)</option>
+                    <option value="afternoon">Afternoon (1:00 PM - 5:00 PM)</option>
+                    <option value="evening">Evening (5:00 PM - 7:00 PM)</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Reason for Reschedule</label>
+                <textarea id="rescheduleReason" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-red-600" placeholder="Please provide a reason..."></textarea>
+            </div>
+            
+            <div class="flex gap-3 pt-4">
+                <button onclick="submitReschedule()" class="flex-1 gradient-bg text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition">
+                    <i class="fas fa-paper-plane mr-2"></i> Submit Request
+                </button>
+                <button onclick="hideModal('rescheduleModal')" class="flex-1 border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Calendar variables
+let currentDate = new Date();
+let selectedDate = null;
+let currentFilter = 'all';
+let currentType = 'all';
+
+// Initialize calendar
+function initCalendar() {
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+                       "July", "August", "September", "October", "November", "December"];
+    
+    document.getElementById('currentMonth').textContent = 
+        `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+    
+    generateCalendarDays();
+}
+
+function generateCalendarDays() {
+    const calendar = document.getElementById('calendarDays');
+    calendar.innerHTML = '';
+    
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    // First day of the month
+    const firstDay = new Date(year, month, 1);
+    // Last day of the month
+    const lastDay = new Date(year, month + 1, 0);
+    
+    // Days in month
+    const daysInMonth = lastDay.getDate();
+    
+    // Starting day (0 = Sunday, 1 = Monday, etc.)
+    const startDay = firstDay.getDay();
+    
+    // Add empty cells for days before the first day
+    for (let i = 0; i < startDay; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-day opacity-0';
+        calendar.appendChild(emptyCell);
+    }
+    
+    // Add days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayCell = document.createElement('div');
+        dayCell.className = 'calendar-day';
+        dayCell.textContent = day;
+        
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        dayCell.dataset.date = dateStr;
+        
+        // Check if this day has lessons
+        const hasLesson = checkIfDayHasLesson(dateStr);
+        if (hasLesson) {
+            dayCell.classList.add('has-lesson');
+        }
+        
+        // Mark today
+        const today = new Date();
+        if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+            dayCell.classList.add('active');
+            selectedDate = dateStr;
+        }
+        
+        dayCell.addEventListener('click', function() {
+            selectDate(this);
+        });
+        
+        calendar.appendChild(dayCell);
+    }
+}
+
+function checkIfDayHasLesson(dateStr) {
+    // In real app, this would check against actual lessons
+    // For now, simulate by checking against known lesson dates
+    const lessons = document.querySelectorAll('.schedule-card[data-date]');
+    for (let lesson of lessons) {
+        if (lesson.dataset.date === dateStr) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function selectDate(dayElement) {
+    // Remove active class from all days
+    document.querySelectorAll('.calendar-day').forEach(day => {
+        day.classList.remove('active');
+    });
+    
+    // Add active class to selected day
+    dayElement.classList.add('active');
+    selectedDate = dayElement.dataset.date;
+    
+    // Filter lessons by selected date
+    filterLessonsByDate(selectedDate);
+}
+
+function filterLessonsByDate(date) {
+    const lessons = document.querySelectorAll('.schedule-card');
+    let visibleCount = 0;
+    
+    lessons.forEach(lesson => {
+        if (lesson.dataset.date === date || !date) {
+            lesson.style.display = 'block';
+            setTimeout(() => {
+                lesson.style.opacity = '1';
+                lesson.style.transform = 'translateY(0)';
+            }, 100);
+            visibleCount++;
+        } else {
+            lesson.style.opacity = '0';
+            lesson.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                lesson.style.display = 'none';
+            }, 300);
+        }
+    });
+    
+    document.getElementById('lessonCount').textContent = `${visibleCount} lessons found`;
+}
+
+function previousMonth() {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    initCalendar();
+}
+
+function nextMonth() {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    initCalendar();
+}
+
+// Filter functionality
+document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentFilter = this.dataset.filter;
+        applyLessonFilters();
+    });
+});
+
+document.querySelectorAll('.filter-btn[data-type]').forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn[data-type]').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentType = this.dataset.type;
+        applyLessonFilters();
+    });
+});
+
+function applyLessonFilters() {
+    const lessons = document.querySelectorAll('.schedule-card');
+    let visibleCount = 0;
+    
+    lessons.forEach(lesson => {
+        const status = lesson.dataset.status;
+        const type = lesson.dataset.type;
+        
+        let shouldShow = true;
+        
+        // Filter by status
+        if (currentFilter !== 'all' && status !== currentFilter) {
+            shouldShow = false;
+        }
+        
+        // Filter by type
+        if (currentType !== 'all' && type !== currentType) {
+            shouldShow = false;
+        }
+        
+        if (shouldShow) {
+            lesson.style.display = 'block';
+            setTimeout(() => {
+                lesson.style.opacity = '1';
+                lesson.style.transform = 'translateY(0)';
+            }, 100);
+            visibleCount++;
+        } else {
+            lesson.style.opacity = '0';
+            lesson.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                lesson.style.display = 'none';
+            }, 300);
+        }
+    });
+    
+    document.getElementById('lessonCount').textContent = `${visibleCount} lessons found`;
+}
+
+function applyFilters() {
+    const dateFrom = document.getElementById('dateFrom').value;
+    const dateTo = document.getElementById('dateTo').value;
+    
+    // In real app, this would make an API call to filter lessons by date range
+    console.log('Filtering by date range:', dateFrom, 'to', dateTo);
+    
+    // For now, just apply the current filters
+    applyLessonFilters();
+}
+
+// Lesson actions
+function confirmAttendance(lessonId) {
+    if (confirm('Are you sure you want to confirm attendance for this lesson?')) {
+        // In real app, this would make an API call
+        alert('Attendance confirmed!');
+    }
+}
+
+function requestRescheduleLesson(lessonId) {
+    const lesson = document.querySelector(`.schedule-card[data-lesson-id="${lessonId}"]`);
+    if (lesson) {
+        const title = lesson.querySelector('h3').textContent;
+        document.getElementById('rescheduleLessonTitle').textContent = `Reschedule: ${title}`;
+        showModal('rescheduleModal');
+    }
+}
+
+function cancelLesson(lessonId) {
+    if (confirm('Are you sure you want to cancel this lesson? This may affect your course progress.')) {
+        // In real app, this would make an API call
+        alert('Lesson cancellation requested! You will be contacted for confirmation.');
+    }
+}
+
+// Modal functions
+function showModal(modalId) {
+    document.getElementById(modalId).classList.remove('hidden');
+    document.getElementById(modalId).classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+
+function hideModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    document.getElementById(modalId).classList.remove('flex');
+    document.body.style.overflow = 'auto';
+}
+
+function submitReschedule() {
+    const reason = document.getElementById('rescheduleReason').value;
+    if (!reason.trim()) {
+        alert('Please provide a reason for rescheduling');
+        return;
+    }
+    
+    // In real app, this would submit the reschedule request
+    hideModal('rescheduleModal');
+    alert('Reschedule request submitted! You will be contacted within 24 hours.');
+}
+
+// Utility functions
+function printSchedule() {
+    window.print();
+}
+
+function downloadSchedule() {
+    // In real app, this would generate and download a PDF
+    alert('Schedule PDF download started...');
+}
+
+function contactInstructor() {
+    alert('Please contact your instructor directly or visit the administration office.');
+}
+
+function showInstructorInfo() {
+    alert('Instructor contact details:\n\nName: John Mwansa\nPhone: +260 XXX XXXXXX\nEmail: john.mwansa@keemdrivingschool.com\nOffice Hours: Mon-Fri, 8:00 AM - 5:00 PM');
+}
+
+function requestReschedule() {
+    alert('To request a reschedule, please select a specific lesson and use the "Reschedule" button.');
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    initCalendar();
+    
+    // Close modal on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hideModal('rescheduleModal');
+        }
+    });
+    
+    // Close modal when clicking outside
+    document.getElementById('rescheduleModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            hideModal('rescheduleModal');
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,466 @@
+{% extends "base.html" %}
+
+{% block title %}Our Branches - KEEM Driving School{% endblock %}
+
+{% block extra_css %}
+<style>
+    .branch-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 2px solid transparent;
+    }
+    
+    .branch-card:hover {
+        transform: translateY(-10px);
+        border-color: #dc2626;
+        box-shadow: 0 20px 40px rgba(220, 38, 38, 0.15);
+    }
+    
+    .branch-header {
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .branch-header:before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+    
+    .branch-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #fbbf24;
+        color: #92400e;
+        font-size: 0.75rem;
+        font-weight: bold;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+    }
+    
+    .branch-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .contact-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+    
+    .contact-info i {
+        width: 30px;
+        color: #dc2626;
+    }
+    
+    .map-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        height: 300px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+    
+    .map-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+    
+    .hours-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .hours-table tr {
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .hours-table td {
+        padding: 0.75rem 0;
+    }
+    
+    .hours-table td:last-child {
+        text-align: right;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="gradient-bg text-white py-16">
+    <div class="container mx-auto px-4">
+        <div class="text-center">
+            <h1 class="text-5xl font-bold mb-4">Our Branches</h1>
+            <p class="text-xl text-gray-200">Find a KEEM Driving School near you in the Copperbelt Province</p>
+        </div>
+    </div>
+</section>
+
+<!-- Branches List -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            <!-- Luanshya Branch -->
+            <div class="branch-card animate-fade-in">
+                <div class="branch-header">
+                    <div class="branch-icon">
+                        <i class="fas fa-building text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-2">Luanshya Branch</h2>
+                    <p class="text-red-100">Our Flagship Location</p>
+                    <div class="branch-badge">MAIN BRANCH</div>
+                </div>
+                
+                <div class="p-8">
+                    <div class="space-y-6">
+                        <!-- Address -->
+                        <div>
+                            <h3 class="font-bold text-lg mb-3 flex items-center">
+                                <i class="fas fa-map-marker-alt text-red-600 mr-2"></i>
+                                Address
+                            </h3>
+                            <p class="text-gray-700">
+                                Plot 123, Main Street<br>
+                                Luanshya, Copperbelt Province<br>
+                                Zambia
+                            </p>
+                        </div>
+                        
+                        <!-- Contact -->
+                        <div>
+                            <h3 class="font-bold text-lg mb-3 flex items-center">
+                                <i class="fas fa-phone-alt text-red-600 mr-2"></i>
+                                Contact Information
+                            </h3>
+                            <div class="space-y-2">
+                                <div class="contact-info">
+                                    <i class="fas fa-phone"></i>
+                                    <span>+260 123 456 789</span>
+                                </div>
+                                <div class="contact-info">
+                                    <i class="fab fa-whatsapp"></i>
+                                    <span>+260 123 456 789</span>
+                                </div>
+                                <div class="contact-info">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>luanshya@keemdrivingschool.com</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Working Hours -->
+                        <div>
+                            <h3 class="font-bold text-lg mb-3 flex items-center">
+                                <i class="fas fa-clock text-red-600 mr-2"></i>
+                                Working Hours
+                            </h3>
+                            <table class="hours-table">
+                                <tr>
+                                    <td>Monday - Friday</td>
+                                    <td>8:00 AM - 5:00 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>Saturday</td>
+                                    <td>8:00 AM - 2:00 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>Sunday</td>
+                                    <td>Closed</td>
+                                </tr>
+                                <tr>
+                                    <td>Public Holidays</td>
+                                    <td>Closed</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <!-- Map Placeholder -->
+                        <div class="map-container">
+                            <div class="map-placeholder">
+                                <i class="fas fa-map-marked-alt text-gray-400 text-6xl mb-4"></i>
+                                <p class="font-semibold text-gray-600">Luanshya Branch Map</p>
+                                <p class="text-sm text-gray-500">Integrate Google Maps here</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Branch Manager -->
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-gray-800 mb-2">Branch Manager</h4>
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white mr-3">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">Joseph Mwamba</p>
+                                    <p class="text-sm text-gray-600">15+ years experience</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CTA Button -->
+                        <div class="pt-4">
+                            <a href="/apply?branch=luanshya" class="block w-full bg-red-600 text-white text-center py-3 rounded-lg font-bold hover:bg-red-700 transition">
+                                Apply at Luanshya Branch
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mufulira Branch -->
+            <div class="branch-card animate-fade-in">
+                <div class="branch-header">
+                    <div class="branch-icon">
+                        <i class="fas fa-university text-white text-3xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-2">Mufulira Branch</h2>
+                    <p class="text-red-100">Serving Mufulira & Surrounding Areas</p>
+                    <div class="branch-badge">NEW BRANCH</div>
+                </div>
+                
+                <div class="p-8">
+                    <div class="space-y-6">
+                        <!-- Address -->
+                        <div>
+                            <h3 class="font-bold text-lg mb-3 flex items-center">
+                                <i class="fas fa-map-marker-alt text-red-600 mr-2"></i>
+                                Address
+                            </h3>
+                            <p class="text-gray-700">
+                                Plot 456, Independence Avenue<br>
+                                Mufulira, Copperbelt Province<br>
+                                Zambia
+                            </p>
+                        </div>
+                        
+                        <!-- Contact -->
+                        <div>
+                            <h3 class="font-bold text-lg mb-3 flex items-center">
+                                <i class="fas fa-phone-alt text-red-600 mr-2"></i>
+                                Contact Information
+                            </h3>
+                            <div class="space-y-2">
+                                <div class="contact-info">
+                                    <i class="fas fa-phone"></i>
+                                    <span>+260 987 654 321</span>
+                                </div>
+                                <div class="contact-info">
+                                    <i class="fab fa-whatsapp"></i>
+                                    <span>+260 987 654 321</span>
+                                </div>
+                                <div class="contact-info">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>mufulira@keemdrivingschool.com</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Working Hours -->
+                        <div>
+                            <h3 class="font-bold text-lg mb-3 flex items-center">
+                                <i class="fas fa-clock text-red-600 mr-2"></i>
+                                Working Hours
+                            </h3>
+                            <table class="hours-table">
+                                <tr>
+                                    <td>Monday - Friday</td>
+                                    <td>8:00 AM - 5:00 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>Saturday</td>
+                                    <td>8:00 AM - 2:00 PM</td>
+                                </tr>
+                                <tr>
+                                    <td>Sunday</td>
+                                    <td>Closed</td>
+                                </tr>
+                                <tr>
+                                    <td>Public Holidays</td>
+                                    <td>Closed</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <!-- Map Placeholder -->
+                        <div class="map-container">
+                            <div class="map-placeholder">
+                                <i class="fas fa-map-marked-alt text-gray-400 text-6xl mb-4"></i>
+                                <p class="font-semibold text-gray-600">Mufulira Branch Map</p>
+                                <p class="text-sm text-gray-500">Integrate Google Maps here</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Branch Manager -->
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-gray-800 mb-2">Branch Manager</h4>
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center text-white mr-3">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div>
+                                    <p class="font-semibold">Grace Banda</p>
+                                    <p class="text-sm text-gray-600">10+ years experience</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- CTA Button -->
+                        <div class="pt-4">
+                            <a href="/apply?branch=mufulira" class="block w-full bg-red-600 text-white text-center py-3 rounded-lg font-bold hover:bg-red-700 transition">
+                                Apply at Mufulira Branch
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Branch Facilities -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">Branch Facilities</h2>
+        
+        <div class="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            <div class="text-center">
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-car text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Modern Fleet</h3>
+                <p class="text-gray-600">Well-maintained training vehicles with dual controls</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-chalkboard-teacher text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Classrooms</h3>
+                <p class="text-gray-600">Air-conditioned classrooms for theory sessions</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-wifi text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Free WiFi</h3>
+                <p class="text-gray-600">High-speed internet for students</p>
+            </div>
+            
+            <div class="text-center">
+                <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-coffee text-white text-2xl"></i>
+                </div>
+                <h3 class="font-bold text-lg mb-2">Waiting Area</h3>
+                <p class="text-gray-600">Comfortable waiting area with refreshments</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How to Find Us -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold mb-8 text-center gradient-text">How to Find Our Branches</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-gray-50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-directions text-red-600 mr-3"></i>
+                        Directions to Luanshya Branch
+                    </h3>
+                    <ol class="space-y-3 text-gray-700">
+                        <li class="flex items-start">
+                            <span class="bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 flex-shrink-0">1</span>
+                            <span>From Luanshya town center, head towards Main Street</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 flex-shrink-0">2</span>
+                            <span>Look for the KEEM Driving School signboard</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 flex-shrink-0">3</span>
+                            <span>We're located next to the Luanshya Post Office</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 flex-shrink-0">4</span>
+                            <span>Ample parking available on site</span>
+                        </li>
+                    </ol>
+                </div>
+                
+                <div class="bg-gray-50 p-6 rounded-xl">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-directions text-red-600 mr-3"></i>
+                        Directions to Mufulira Branch
+                    </h3>
+                    <ol class="space-y-3 text-gray-700">
+                        <li class="flex items-start">
+                            <span class="bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 flex-shrink-0">1</span>
+                            <span>From Independence Avenue roundabout, head north</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 flex-shrink-0">2</span>
+                            <span>Look for the large red and black KEEM sign</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 flex-shrink-0">3</span>
+                            <span>We're opposite Mufulira Mall</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm mr-3 flex-shrink-0">4</span>
+                            <span>Secure parking inside the compound</span>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20 gradient-bg text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold mb-6">Visit Us Today!</h2>
+        <p class="text-xl mb-8 text-gray-200">Walk-ins welcome during working hours</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/contact" class="bg-white text-red-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition hover-scale">
+                <i class="fas fa-envelope mr-2"></i>Contact Us
+            </a>
+            <a href="/apply" class="border-2 border-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-red-600 transition">
+                <i class="fas fa-edit mr-2"></i>Apply Online
+            </a>
+        </div>
+        <p class="mt-8 text-red-100">
+            <i class="fas fa-phone mr-2"></i>General Inquiries: +260 XXX XXXXXX
+        </p>
+    </div>
+</section>
+{% endblock %}

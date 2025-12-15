@@ -1,0 +1,586 @@
+{% extends "base.html" %}
+
+{% block title %}{{ course.name }} - KEEM Driving School{% endblock %}
+
+{% block extra_css %}
+<style>
+    .course-hero {
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.9) 0%, rgba(0, 0, 0, 0.9) 100%), 
+                    url('https://images.unsplash.com/photo-1549399542-7e3f8b79c341?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 5rem 0;
+    }
+    
+    .course-badge {
+        display: inline-block;
+        background: white;
+        color: #dc2626;
+        font-size: 0.875rem;
+        font-weight: bold;
+        padding: 0.25rem 1rem;
+        border-radius: 9999px;
+        margin-bottom: 1rem;
+    }
+    
+    .feature-icon {
+        width: 60px;
+        height: 60px;
+        background: #fee2e2;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+    
+    .curriculum-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 0.75rem;
+        background: #f9fafb;
+        transition: all 0.3s;
+    }
+    
+    .curriculum-item:hover {
+        background: #fee2e2;
+        transform: translateX(5px);
+    }
+    
+    .curriculum-number {
+        width: 36px;
+        height: 36px;
+        background: #dc2626;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+    
+    .pricing-card {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 3px solid #dc2626;
+    }
+    
+    .requirements-list {
+        list-style: none;
+        padding-left: 0;
+    }
+    
+    .requirements-list li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .requirements-list li:last-child {
+        border-bottom: none;
+    }
+    
+    .instructor-card {
+        background: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    
+    .instructor-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .duration-badge {
+        display: inline-flex;
+        align-items: center;
+        background: #f0f9ff;
+        color: #0369a1;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="course-hero">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl">
+            <div class="course-badge">{{ course.category }}</div>
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">{{ course.name }}</h1>
+            <p class="text-xl text-gray-200 mb-8">{{ course.description }}</p>
+            
+            <div class="flex flex-wrap items-center gap-6">
+                <div class="duration-badge">
+                    <i class="far fa-clock mr-2"></i>
+                    {{ course.duration_weeks }} Weeks
+                </div>
+                <div class="duration-badge">
+                    <i class="fas fa-graduation-cap mr-2"></i>
+                    {{ course.total_hours }} Total Hours
+                </div>
+                <div class="duration-badge">
+                    <i class="fas fa-user-tie mr-2"></i>
+                    Certified Instructor
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Course Overview -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+            <div>
+                <h2 class="text-4xl font-bold mb-8 gradient-text">Course Overview</h2>
+                <div class="prose max-w-none text-gray-700 space-y-4">
+                    <p>
+                        This comprehensive {{ course.name }} program is designed to provide you with all the skills and knowledge 
+                        needed to become a confident and responsible driver. Our proven teaching methods ensure that you'll 
+                        not only pass your driving test but also develop safe driving habits for life.
+                    </p>
+                    <p>
+                        Through a combination of theoretical classroom sessions and extensive practical driving experience, 
+                        you'll master vehicle control, traffic rules, defensive driving techniques, and emergency procedures.
+                    </p>
+                </div>
+                
+                <div class="mt-8 grid grid-cols-2 gap-4">
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-book-open text-red-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold">Theory Classes</h4>
+                        <p class="text-gray-600 text-sm">{{ course.theory_hours }} Hours</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-road text-red-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold">Practical Training</h4>
+                        <p class="text-gray-600 text-sm">{{ course.practical_hours }} Hours</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-chart-bar text-red-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold">Pass Rate</h4>
+                        <p class="text-gray-600 text-sm">95% First Attempt</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="feature-icon mx-auto">
+                            <i class="fas fa-car text-red-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold">Vehicle Provided</h4>
+                        <p class="text-gray-600 text-sm">Dual Controls</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pricing-card">
+                <div class="text-center mb-8">
+                    <h3 class="text-3xl font-bold mb-2">Course Fee</h3>
+                    <div class="text-5xl font-bold text-red-600 mb-4">K{{ "%.2f"|format(course.fee|float) }}</div>
+                    <p class="text-gray-600">Complete package with all training materials</p>
+                </div>
+                
+                <div class="space-y-4 mb-8">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-700">Course Fee</span>
+                        <span class="font-bold">K{{ "%.2f"|format(course.fee|float) }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-700">Registration Fee</span>
+                        <span class="font-bold">K50.00</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-700">Learning Materials</span>
+                        <span class="font-bold">K100.00</span>
+                    </div>
+                    <div class="border-t pt-4">
+                        <div class="flex justify-between items-center text-lg font-bold">
+                            <span>Total</span>
+                            <span>K{{ "%.2f"|format(course.fee|float + 150) }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <a href="/apply?course={{ course.id }}" class="block w-full bg-red-600 text-white text-center py-4 rounded-xl font-bold text-lg hover:bg-red-700 transition">
+                        Enroll Now
+                    </a>
+                    <a href="/contact" class="block w-full text-center text-red-600 py-3 font-semibold hover:text-red-700 transition">
+                        <i class="fas fa-phone mr-2"></i>Request More Info
+                    </a>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                        100% Money-back guarantee if not satisfied
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Curriculum -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">Course Curriculum</h2>
+        
+        <div class="max-w-4xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Theory Modules</h3>
+                    <div class="space-y-3">
+                        <div class="curriculum-item">
+                            <div class="curriculum-number">1</div>
+                            <div>
+                                <h4 class="font-bold">Road Signs & Traffic Laws</h4>
+                                <p class="text-sm text-gray-600">Understanding Zambian traffic regulations</p>
+                            </div>
+                        </div>
+                        
+                        <div class="curriculum-item">
+                            <div class="curriculum-number">2</div>
+                            <div>
+                                <h4 class="font-bold">Vehicle Mechanics</h4>
+                                <p class="text-sm text-gray-600">Basic vehicle operation and maintenance</p>
+                            </div>
+                        </div>
+                        
+                        <div class="curriculum-item">
+                            <div class="curriculum-number">3</div>
+                            <div>
+                                <h4 class="font-bold">Defensive Driving Principles</h4>
+                                <p class="text-sm text-gray-600">Accident prevention techniques</p>
+                            </div>
+                        </div>
+                        
+                        <div class="curriculum-item">
+                            <div class="curriculum-number">4</div>
+                            <div>
+                                <h4 class="font-bold">Emergency Procedures</h4>
+                                <p class="text-sm text-gray-600">Handling breakdowns and accidents</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Practical Training</h3>
+                    <div class="space-y-3">
+                        <div class="curriculum-item">
+                            <div class="curriculum-number">5</div>
+                            <div>
+                                <h4 class="font-bold">Basic Vehicle Control</h4>
+                                <p class="text-sm text-gray-600">Starting, stopping, and steering</p>
+                            </div>
+                        </div>
+                        
+                        <div class="curriculum-item">
+                            <div class="curriculum-number">6</div>
+                            <div>
+                                <h4 class="font-bold">Maneuvering Skills</h4>
+                                <p class="text-sm text-gray-600">Parking, reversing, and turns</p>
+                            </div>
+                        </div>
+                        
+                        <div class="curriculum-item">
+                            <div class="curriculum-number">7</div>
+                            <div>
+                                <h4 class="font-bold">Road Driving</h4>
+                                <p class="text-sm text-gray-600">Traffic navigation and lane discipline</p>
+                            </div>
+                        </div>
+                        
+                        <div class="curriculum-item">
+                            <div class="curriculum-number">8</div>
+                            <div>
+                                <h4 class="font-bold">Test Preparation</h4>
+                                <p class="text-sm text-gray-600">Mock tests and final assessment</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Requirements -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold mb-8 text-center gradient-text">Requirements & Eligibility</h2>
+            
+            <div class="grid md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Who Can Apply?</h3>
+                    <ul class="requirements-list">
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Minimum age: {{ '16' if course.category == 'Motorcycle' else '18' }} years</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Valid National Registration Card (NRC)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Medical fitness certificate (for certain courses)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Basic literacy in English or local languages</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                            <span>Proof of residence</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">Documents Needed</h3>
+                    <div class="bg-gray-50 p-6 rounded-xl">
+                        <ul class="space-y-3">
+                            <li class="flex items-center">
+                                <i class="fas fa-id-card text-red-600 mr-3"></i>
+                                <span>Original NRC + 2 copies</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-images text-red-600 mr-3"></i>
+                                <span>3 passport-sized photographs</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-file-medical text-red-600 mr-3"></i>
+                                <span>Medical certificate from approved clinic</span>
+                            </li>
+                            <li class="flex items-center">
+                                <i class="fas fa-home text-red-600 mr-3"></i>
+                                <span>Proof of residence (utility bill, etc.)</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="mt-6 p-4 bg-red-50 rounded-lg">
+                            <p class="text-sm text-gray-700">
+                                <i class="fas fa-info-circle text-red-600 mr-2"></i>
+                                For PSV (Class D) courses, additional police clearance certificate required
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Instructors -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">Meet Your Instructors</h2>
+        
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div class="instructor-card">
+                <div class="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user text-white text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-xl mb-2">Joseph Mwamba</h3>
+                <p class="text-red-600 font-semibold mb-2">Chief Instructor</p>
+                <p class="text-gray-600 text-sm mb-4">15+ years teaching experience</p>
+                <div class="flex justify-center text-yellow-400">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+            
+            <div class="instructor-card">
+                <div class="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user text-white text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-xl mb-2">Grace Banda</h3>
+                <p class="text-red-600 font-semibold mb-2">Senior Instructor</p>
+                <p class="text-gray-600 text-sm mb-4">10+ years teaching experience</p>
+                <div class="flex justify-center text-yellow-400">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                </div>
+            </div>
+            
+            <div class="instructor-card">
+                <div class="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user text-white text-3xl"></i>
+                </div>
+                <h3 class="font-bold text-xl mb-2">Patrick Phiri</h3>
+                <p class="text-red-600 font-semibold mb-2">Instructor</p>
+                <p class="text-gray-600 text-sm mb-4">8+ years teaching experience</p>
+                <div class="flex justify-center text-yellow-400">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">Frequently Asked Questions</h2>
+        
+        <div class="max-w-3xl mx-auto space-y-4">
+            <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-50 transition">
+                    <span>What is included in the course fee?</span>
+                    <i class="fas fa-chevron-down text-red-600 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t border-gray-200">
+                    <p class="text-gray-600">
+                        The course fee includes all theory classes, practical driving lessons, training materials, 
+                        use of our vehicles with dual controls, and test preparation. Additional costs include the 
+                        RTSA test fee (K{{ '300' if course.category == 'Motorcycle' else '500' }}) and medical certificate.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-50 transition">
+                    <span>Can I reschedule my lessons?</span>
+                    <i class="fas fa-chevron-down text-red-600 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t border-gray-200">
+                    <p class="text-gray-600">
+                        Yes, you can reschedule lessons with at least 24 hours notice. We understand that life happens, 
+                        and we're flexible with scheduling. Contact your branch coordinator to reschedule.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-50 transition">
+                    <span>What happens if I don't pass the test?</span>
+                    <i class="fas fa-chevron-down text-red-600 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t border-gray-200">
+                    <p class="text-gray-600">
+                        We provide free additional training and allow you to retake the test within 3 months of course 
+                        completion at no extra charge. Our 95% first-time pass rate means this is rarely needed!
+                    </p>
+                </div>
+            </div>
+            
+            <div class="border border-gray-200 rounded-xl overflow-hidden">
+                <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center font-semibold text-lg hover:bg-gray-50 transition">
+                    <span>Do you offer payment plans?</span>
+                    <i class="fas fa-chevron-down text-red-600 transition-transform"></i>
+                </button>
+                <div class="faq-content hidden px-6 py-4 border-t border-gray-200">
+                    <p class="text-gray-600">
+                        Yes! We offer flexible payment options: Pay in full (5% discount), 50% deposit with balance in 2 
+                        installments, or monthly payment plans. Contact us to discuss what works for your budget.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Courses -->
+<section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold mb-12 text-center gradient-text">Related Courses</h2>
+        
+        <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {% for related_course in related_courses[:3] %}
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden card-hover">
+                <div class="gradient-bg p-6 text-white">
+                    <h3 class="text-xl font-bold mb-2">{{ related_course.name }}</h3>
+                    <p class="text-red-100 text-sm">{{ related_course.duration_weeks }} Weeks • {{ related_course.total_hours }} Hours</p>
+                </div>
+                <div class="p-6">
+                    <div class="text-2xl font-bold text-red-600 mb-4">K{{ "%.2f"|format(related_course.fee|float) }}</div>
+                    <a href="/course/{{ related_course.id }}" class="block w-full bg-red-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-red-700 transition">
+                        View Course
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Final CTA -->
+<section class="py-20 gradient-bg text-white">
+    <div class="container mx-auto px-4 text-center">
+        <h2 class="text-4xl font-bold mb-6">Ready to Start This Course?</h2>
+        <p class="text-xl mb-8 text-gray-200">Limited seats available. Apply today to secure your spot!</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/apply?course={{ course.id }}" class="bg-white text-red-600 px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition hover-scale">
+                <i class="fas fa-edit mr-2"></i>Apply Now
+            </a>
+            <a href="/contact" class="border-2 border-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-red-600 transition">
+                <i class="fas fa-question-circle mr-2"></i>Ask Questions
+            </a>
+        </div>
+        <p class="mt-8 text-red-100">
+            <i class="fas fa-phone mr-2"></i>Need help choosing? Call: +260 XXX XXXXXX
+        </p>
+    </div>
+</section>
+
+<script>
+// FAQ Toggle
+document.querySelectorAll('.faq-toggle').forEach(button => {
+    button.addEventListener('click', function() {
+        const content = this.nextElementSibling;
+        const icon = this.querySelector('i');
+        
+        content.classList.toggle('hidden');
+        icon.classList.toggle('fa-chevron-down');
+        icon.classList.toggle('fa-chevron-up');
+    });
+});
+
+// Smooth scroll for Apply button
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href.startsWith('#') && href.length > 1) {
+            e.preventDefault();
+            const element = document.querySelector(href);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

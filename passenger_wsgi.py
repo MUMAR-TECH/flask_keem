@@ -10,4 +10,4 @@ if project_home not in sys.path:
 os.environ['PYTHON_EGG_CACHE'] = '/home/yourusername/.python-eggs'
 
 # Import Flask application
-from app import app as application
+from keem.app11 import app as application

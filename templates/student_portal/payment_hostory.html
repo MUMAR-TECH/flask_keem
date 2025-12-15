@@ -1,0 +1,633 @@
+{% extends "base.html" %}
+
+{% block title %}Payment History - Student Portal | KEEM Driving School{% endblock %}
+
+{% block extra_css %}
+<style>
+    .payment-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border-left: 5px solid transparent;
+    }
+    
+    .payment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(220, 38, 38, 0.15);
+    }
+    
+    .payment-completed {
+        border-left-color: #10b981;
+    }
+    
+    .payment-pending {
+        border-left-color: #f59e0b;
+    }
+    
+    .payment-failed {
+        border-left-color: #ef4444;
+    }
+    
+    .amount-display {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #10b981;
+    }
+    
+    .summary-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+    }
+    
+    .filter-option {
+        padding: 0.75rem 1.5rem;
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .filter-option:hover,
+    .filter-option.active {
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+        border-color: transparent;
+    }
+    
+    .payment-method-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+    
+    .cash-badge {
+        background: #d1fae5;
+        color: #065f46;
+    }
+    
+    .mobile-badge {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .bank-badge {
+        background: #ede9fe;
+        color: #5b21b6;
+    }
+    
+    .card-badge {
+        background: #fce7f3;
+        color: #9d174d;
+    }
+    
+    .invoice-btn {
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        transition: all 0.3s;
+    }
+    
+    .invoice-btn:hover {
+        opacity: 0.9;
+        transform: translateY(-2px);
+    }
+    
+    .year-selector {
+        display: flex;
+        overflow-x: auto;
+        gap: 0.5rem;
+        padding: 1rem 0;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .year-btn {
+        padding: 0.5rem 1rem;
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 9999px;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: all 0.3s;
+    }
+    
+    .year-btn:hover,
+    .year-btn.active {
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+        border-color: transparent;
+    }
+    
+    .monthly-summary {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .monthly-summary:hover {
+        background: #f1f5f9;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
+            <div>
+                <h1 class="text-3xl font-bold gradient-text mb-2">Payment History</h1>
+                <p class="text-gray-600">View and track all your payment transactions</p>
+            </div>
+            <div class="mt-4 md:mt-0">
+                <a href="/student-portal/dashboard" class="flex items-center gap-2 text-red-600 hover:text-red-700 font-medium">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="mb-6 p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-800 border-l-4 border-red-500{% else %}bg-green-100 text-green-800 border-l-4 border-green-500{% endif %}">
+                        <div class="flex items-center">
+                            <i class="fas {% if category == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} mr-3"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="summary-card">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm opacity-90">Total Paid</p>
+                    <h2 class="text-3xl font-bold mt-1">K{{ student.amount_paid|format_currency }}</h2>
+                </div>
+                <i class="fas fa-money-check-alt text-3xl opacity-50"></i>
+            </div>
+        </div>
+        
+        <div class="summary-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm opacity-90">Remaining Balance</p>
+                    <h2 class="text-3xl font-bold mt-1">K{{ student.balance|format_currency }}</h2>
+                </div>
+                <i class="fas fa-file-invoice-dollar text-3xl opacity-50"></i>
+            </div>
+        </div>
+        
+        <div class="summary-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm opacity-90">Total Payments</p>
+                    <h2 class="text-3xl font-bold mt-1">{{ payments|length }}</h2>
+                </div>
+                <i class="fas fa-receipt text-3xl opacity-50"></i>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filters -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <h3 class="font-bold text-lg mb-4">Filter Payments</h3>
+        
+        <!-- Year Selector -->
+        <div class="mb-6">
+            <p class="text-sm font-medium text-gray-700 mb-3">Select Year:</p>
+            <div class="year-selector">
+                <button class="year-btn active" data-year="all">All Years</button>
+                {% for year in years %}
+                <button class="year-btn" data-year="{{ year }}">{{ year }}</button>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Filter Options -->
+        <div class="flex flex-wrap gap-3">
+            <button class="filter-option active" data-filter="all">All Payments</button>
+            <button class="filter-option" data-filter="completed">Completed</button>
+            <button class="filter-option" data-filter="pending">Pending</button>
+            <button class="filter-option" data-filter="cash">Cash</button>
+            <button class="filter-option" data-filter="mobile_money">Mobile Money</button>
+            <button class="filter-option" data-filter="bank_transfer">Bank Transfer</button>
+        </div>
+    </div>
+    
+    <!-- Payment List -->
+    <div class="mb-8">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold gradient-text">Payment Transactions</h2>
+            <span class="text-gray-600">{{ payments|length }} payments found</span>
+        </div>
+        
+        {% if payments %}
+        <div class="space-y-4">
+            {% for payment in payments %}
+            <div class="payment-card {% if payment.status == 'completed' %}payment-completed{% elif payment.status == 'pending' %}payment-pending{% else %}payment-failed{% endif %}">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex-1">
+                        <div class="flex flex-col md:flex-row md:items-center gap-4 mb-4 md:mb-0">
+                            <div>
+                                <h4 class="font-bold text-lg text-gray-800">{{ payment.payment_number }}</h4>
+                                <div class="flex items-center gap-3 mt-2">
+                                    <span class="text-sm text-gray-600">
+                                        <i class="far fa-calendar mr-1"></i>
+                                        {{ payment.payment_date.strftime('%d %b, %Y') }}
+                                    </span>
+                                    {% if payment.payment_method == 'cash' %}
+                                    <span class="payment-method-badge cash-badge">
+                                        <i class="fas fa-money-bill-wave"></i> Cash
+                                    </span>
+                                    {% elif payment.payment_method == 'mobile_money' %}
+                                    <span class="payment-method-badge mobile-badge">
+                                        <i class="fas fa-mobile-alt"></i> Mobile Money
+                                    </span>
+                                    {% elif payment.payment_method == 'bank_transfer' %}
+                                    <span class="payment-method-badge bank-badge">
+                                        <i class="fas fa-university"></i> Bank Transfer
+                                    </span>
+                                    {% elif payment.payment_method == 'card' %}
+                                    <span class="payment-method-badge card-badge">
+                                        <i class="fas fa-credit-card"></i> Card
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-4">
+                                <div>
+                                    <p class="text-sm text-gray-600">Reference:</p>
+                                    <p class="font-medium">{{ payment.reference_number or 'N/A' }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-600">Received By:</p>
+                                    <p class="font-medium">{{ payment.receiver.name if payment.receiver else 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <div class="text-right">
+                            <div class="amount-display">K{{ payment.amount|format_currency }}</div>
+                            {% if payment.status == 'completed' %}
+                            <span class="text-sm text-green-600 font-medium">
+                                <i class="fas fa-check-circle mr-1"></i> Completed
+                            </span>
+                            {% elif payment.status == 'pending' %}
+                            <span class="text-sm text-yellow-600 font-medium">
+                                <i class="fas fa-clock mr-1"></i> Pending
+                            </span>
+                            {% else %}
+                            <span class="text-sm text-red-600 font-medium">
+                                <i class="fas fa-times-circle mr-1"></i> Failed
+                            </span>
+                            {% endif %}
+                        </div>
+                        
+                        {% if payment.status == 'completed' %}
+                        <button onclick="downloadInvoice('{{ payment.id }}')" class="invoice-btn flex items-center gap-2">
+                            <i class="fas fa-file-pdf"></i> Invoice
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if payment.notes %}
+                <div class="mt-4 pt-4 border-t border-gray-100">
+                    <p class="text-sm text-gray-600"><strong>Notes:</strong> {{ payment.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Pagination -->
+        <div class="mt-8 flex justify-center">
+            <div class="flex space-x-2">
+                <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>
+                    Previous
+                </button>
+                <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 bg-gray-100">
+                    1
+                </button>
+                <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    2
+                </button>
+                <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    Next
+                </button>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <div class="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-receipt text-gray-400 text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-700 mb-2">No Payments Found</h3>
+            <p class="text-gray-600 mb-6">You haven't made any payments yet.</p>
+            {% if student.balance > 0 %}
+            <button onclick="showPaymentModal()" class="gradient-bg text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition">
+                <i class="fas fa-money-bill-wave mr-2"></i> Make Payment
+            </button>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Monthly Summary -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <h3 class="font-bold text-lg mb-6 gradient-text">Payment Summary by Month</h3>
+        
+        <div class="space-y-3">
+            {% for month_data in monthly_summary %}
+            <div class="monthly-summary">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h4 class="font-medium text-gray-800">{{ month_data.month }}</h4>
+                        <p class="text-sm text-gray-600">{{ month_data.count }} payment{{ 's' if month_data.count != 1 }}</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-bold text-green-600">K{{ month_data.total|format_currency }}</div>
+                        <div class="text-xs text-gray-500">Total for month</div>
+                    </div>
+                </div>
+                
+                {% if month_data.breakdown %}
+                <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {% for method, amount in month_data.breakdown.items() %}
+                    <div class="text-center p-2 bg-gray-50 rounded">
+                        <p class="text-xs text-gray-600 capitalize">{{ method.replace('_', ' ') }}</p>
+                        <p class="text-sm font-medium">K{{ amount|format_currency }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+    <!-- Payment Methods Info -->
+    <div class="bg-white rounded-xl shadow-md p-6">
+        <h3 class="font-bold text-lg mb-6 gradient-text">Available Payment Methods</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="flex items-start gap-4 p-4 bg-blue-50 rounded-lg">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-money-bill-wave text-blue-600 text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Cash Payment</h4>
+                    <p class="text-sm text-gray-600 mb-3">Pay directly at any KEEM branch office during working hours.</p>
+                    <p class="text-xs text-gray-500"><i class="fas fa-clock mr-1"></i> Mon-Fri: 8:00 AM - 5:00 PM</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start gap-4 p-4 bg-green-50 rounded-lg">
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-mobile-alt text-green-600 text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Mobile Money</h4>
+                    <p class="text-sm text-gray-600 mb-3">Send payment to +260 XXX XXXXXX. Include your student number as reference.</p>
+                    <p class="text-xs text-gray-500"><i class="fas fa-network-wired mr-1"></i> Airtel, MTN, Zamtel</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start gap-4 p-4 bg-purple-50 rounded-lg">
+                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-university text-purple-600 text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Bank Transfer</h4>
+                    <p class="text-sm text-gray-600 mb-3">Transfer to KEEM Driving School account. Send receipt to payments@keemdrivingschool.com</p>
+                    <p class="text-xs text-gray-500"><i class="fas fa-info-circle mr-1"></i> Account details on request</p>
+                </div>
+            </div>
+            
+            <div class="flex items-start gap-4 p-4 bg-red-50 rounded-lg">
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-credit-card text-red-600 text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-800 mb-2">Card Payment</h4>
+                    <p class="text-sm text-gray-600 mb-3">Visa/MasterCard payments available at branch offices only.</p>
+                    <p class="text-xs text-gray-500"><i class="fas fa-shield-alt mr-1"></i> Secure payment processing</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+            <div class="flex items-start">
+                <i class="fas fa-exclamation-triangle text-yellow-600 mt-1 mr-3"></i>
+                <div>
+                    <p class="font-medium text-yellow-800">Important Payment Instructions</p>
+                    <ul class="text-sm text-yellow-700 mt-2 space-y-1">
+                        <li>Always include your student number as payment reference</li>
+                        <li>Keep payment receipts for verification</li>
+                        <li>Payments may take 24 hours to reflect in your account</li>
+                        <li>Contact accounts office for any payment issues</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Make Payment Modal -->
+<div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full animate-fade-in">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold gradient-text">Make Payment</h3>
+            <button onclick="hidePaymentModal()" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="space-y-4">
+            <div>
+                <p class="text-sm text-gray-600 mb-2">Current Balance:</p>
+                <p class="text-2xl font-bold text-red-600">K{{ student.balance|format_currency }}</p>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+                <select class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-red-600">
+                    <option value="cash">Cash (at branch)</option>
+                    <option value="mobile_money">Mobile Money</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Amount (Kwacha)</label>
+                <input type="number" id="paymentAmount" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-red-600" min="1" max="{{ student.balance }}" placeholder="Enter amount">
+            </div>
+            
+            <div class="text-sm text-gray-600">
+                <p><i class="fas fa-info-circle mr-2"></i>After making payment, contact accounts office for verification</p>
+            </div>
+            
+            <div class="flex gap-3 pt-4">
+                <button onclick="processPayment()" class="flex-1 gradient-bg text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition">
+                    <i class="fas fa-paper-plane mr-2"></i> Submit Payment
+                </button>
+                <button type="button" onclick="hidePaymentModal()" class="flex-1 border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Filter functionality
+document.querySelectorAll('.filter-option').forEach(button => {
+    button.addEventListener('click', function() {
+        document.querySelectorAll('.filter-option').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        
+        const filter = this.dataset.filter;
+        filterPayments(filter);
+    });
+});
+
+document.querySelectorAll('.year-btn').forEach(button => {
+    button.addEventListener('click', function() {
+        document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
+        
+        const year = this.dataset.year;
+        filterByYear(year);
+    });
+});
+
+function filterPayments(filter) {
+    const payments = document.querySelectorAll('.payment-card');
+    
+    payments.forEach(payment => {
+        const status = payment.classList.contains('payment-completed') ? 'completed' : 
+                      payment.classList.contains('payment-pending') ? 'pending' : 'failed';
+        const method = payment.querySelector('.payment-method-badge')?.textContent.toLowerCase().trim();
+        
+        let shouldShow = false;
+        
+        if (filter === 'all') {
+            shouldShow = true;
+        } else if (filter === 'completed' && status === 'completed') {
+            shouldShow = true;
+        } else if (filter === 'pending' && status === 'pending') {
+            shouldShow = true;
+        } else if (filter === 'cash' && method === 'cash') {
+            shouldShow = true;
+        } else if (filter === 'mobile_money' && method === 'mobile money') {
+            shouldShow = true;
+        } else if (filter === 'bank_transfer' && method === 'bank transfer') {
+            shouldShow = true;
+        }
+        
+        if (shouldShow) {
+            payment.style.display = 'block';
+            setTimeout(() => {
+                payment.style.opacity = '1';
+                payment.style.transform = 'translateY(0)';
+            }, 100);
+        } else {
+            payment.style.opacity = '0';
+            payment.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                payment.style.display = 'none';
+            }, 300);
+        }
+    });
+}
+
+function filterByYear(year) {
+    console.log('Filtering by year:', year);
+    // In real app, this would make an API call to filter payments by year
+}
+
+function downloadInvoice(paymentId) {
+    // Simulate invoice download
+    const link = document.createElement('a');
+    link.href = `/student-portal/invoice/${paymentId}/pdf`;
+    link.download = `invoice_${paymentId}.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+function showPaymentModal() {
+    document.getElementById('paymentModal').classList.remove('hidden');
+    document.getElementById('paymentModal').classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+
+function hidePaymentModal() {
+    document.getElementById('paymentModal').classList.add('hidden');
+    document.getElementById('paymentModal').classList.remove('flex');
+    document.body.style.overflow = 'auto';
+}
+
+function processPayment() {
+    const amount = document.getElementById('paymentAmount').value;
+    if (!amount || amount <= 0) {
+        alert('Please enter a valid amount');
+        return;
+    }
+    
+    if (amount > {{ student.balance }}) {
+        alert('Amount cannot exceed your balance');
+        return;
+    }
+    
+    // Simulate payment processing
+    hidePaymentModal();
+    alert('Payment instruction sent! Please follow the payment method guidelines.');
+}
+
+// Auto-hide flash messages
+setTimeout(() => {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        alert.style.transition = 'opacity 0.5s ease';
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 500);
+    });
+}, 5000);
+
+// Close modal on escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        hidePaymentModal();
+    }
+});
+
+// Close modal when clicking outside
+document.getElementById('paymentModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hidePaymentModal();
+    }
+});
+</script>
+{% endblock %}

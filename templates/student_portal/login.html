@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+
+{% block title %}Student Portal Login - KEEM Driving School{% endblock %}
+
+{% block extra_css %}
+<style>
+    .login-container {
+        min-height: calc(100vh - 400px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .login-box {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 450px;
+    }
+    
+    .input-group {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    
+    .input-group input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 3rem;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    
+    .input-group input:focus {
+        outline: none;
+        border-color: #dc2626;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+    }
+    
+    .input-group i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+    }
+    
+    .toggle-password {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+    }
+    
+    .security-badge {
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .help-option {
+        padding: 1rem;
+        border-radius: 10px;
+        background: #f9fafb;
+        transition: all 0.3s;
+    }
+    
+    .help-option:hover {
+        background: #f3f4f6;
+        transform: translateX(5px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="login-container">
+            <div class="login-box animate-fade-in">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-graduation-cap text-white text-3xl"></i>
+                    </div>
+                    <h1 class="text-3xl font-bold gradient-text mb-2">Student Portal Login</h1>
+                    <p class="text-gray-600">Access your learning dashboard and resources</p>
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="mt-4 p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-800 border-l-4 border-red-500{% else %}bg-green-100 text-green-800 border-l-4 border-green-500{% endif %}">
+                                    <div class="flex items-center">
+                                        <i class="fas {% if category == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} mr-3"></i>
+                                        <span>{{ message }}</span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+                
+                <!-- Login Form -->
+                <form id="studentLoginForm" method="POST" action="/student-portal/login" class="space-y-6">
+                    <div class="input-group">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" name="student_id" placeholder="Student Number or Email" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <i class="fas fa-key"></i>
+                        <input type="password" name="access_code" id="password" placeholder="Access Code" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword()">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" name="remember" class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500">
+                            <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                        </label>
+                        <a href="#" onclick="showForgotModal()" class="text-sm text-red-600 hover:text-red-700 font-medium">
+                            Forgot Access Code?
+                        </a>
+                    </div>
+                    
+                    <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-bold text-lg hover:opacity-90 transition flex items-center justify-center gap-2">
+                        <i class="fas fa-sign-in-alt"></i> Login to Portal
+                    </button>
+                </form>
+                
+                <!-- Security Info -->
+                <div class="mt-6 text-center">
+                    <div class="security-badge inline-block mb-4">
+                        <i class="fas fa-shield-alt"></i> Secure Login
+                    </div>
+                    <p class="text-xs text-gray-500">
+                        <i class="fas fa-lock mr-1"></i> Your login is secured with 256-bit SSL encryption
+                    </p>
+                </div>
+                
+                <!-- Divider -->
+                <div class="relative my-8">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-white text-gray-500">Don't have portal access?</span>
+                    </div>
+                </div>
+                
+                <!-- Register Link -->
+                <div class="text-center">
+                    <a href="/student-portal/register" class="inline-block w-full border-2 border-red-600 text-red-600 py-3 rounded-lg font-bold hover:bg-red-600 hover:text-white transition">
+                        <i class="fas fa-user-plus mr-2"></i> Register for Portal Access
+                    </a>
+                </div>
+                
+                <!-- Help Section -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Need help logging in?</h3>
+                    <div class="space-y-2">
+                        <a href="tel:+260XXXXXXXXX" class="help-option flex items-center gap-3">
+                            <i class="fas fa-phone text-green-600"></i>
+                            <div>
+                                <p class="font-medium">Call Support</p>
+                                <p class="text-xs text-gray-500">+260 XXX XXXXXX</p>
+                            </div>
+                        </a>
+                        <a href="mailto:support@keemdrivingschool.com" class="help-option flex items-center gap-3">
+                            <i class="fas fa-envelope text-blue-600"></i>
+                            <div>
+                                <p class="font-medium">Email Support</p>
+                                <p class="text-xs text-gray-500">support@keemdrivingschool.com</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Forgot Access Code Modal -->
+<div id="forgotModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full animate-fade-in">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold gradient-text">Reset Access Code</h3>
+            <button onclick="hideForgotModal()" class="text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <p class="text-gray-600 mb-6">
+            To reset your access code, please contact the administration office or use the information below:
+        </p>
+        
+        <div class="space-y-4 mb-6">
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <i class="fas fa-phone text-green-600"></i>
+                <div>
+                    <p class="font-medium">Phone Support</p>
+                    <p class="text-sm text-gray-600">+260 XXX XXXXXX</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <i class="fas fa-envelope text-blue-600"></i>
+                <div>
+                    <p class="font-medium">Email Support</p>
+                    <p class="text-sm text-gray-600">support@keemdrivingschool.com</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                <i class="fas fa-map-marker-alt text-red-600"></i>
+                <div>
+                    <p class="font-medium">Visit Office</p>
+                    <p class="text-sm text-gray-600">Main Street, Luanshya</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-sm text-gray-500">
+            <p><i class="fas fa-info-circle mr-2"></i>You'll need to verify your identity to reset your access code.</p>
+            <p><i class="fas fa-info-circle mr-2"></i>Have your student number and identification ready.</p>
+        </div>
+        
+        <button onclick="hideForgotModal()" class="w-full mt-6 bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition">
+            Close
+        </button>
+    </div>
+</div>
+
+<script>
+function togglePassword() {
+    const password = document.getElementById('password');
+    const icon = document.getElementById('toggleIcon');
+    
+    if (password.type === 'password') {
+        password.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        password.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+
+function showForgotModal() {
+    document.getElementById('forgotModal').classList.remove('hidden');
+    document.getElementById('forgotModal').classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+
+function hideForgotModal() {
+    document.getElementById('forgotModal').classList.add('hidden');
+    document.getElementById('forgotModal').classList.remove('flex');
+    document.body.style.overflow = 'auto';
+}
+
+document.getElementById('studentLoginForm').addEventListener('submit', function(e) {
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    
+    // Show loading state
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+    submitBtn.disabled = true;
+    
+    // Re-enable button after 3 seconds if form hasn't submitted
+    setTimeout(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }, 3000);
+});
+
+// Auto-hide flash messages
+setTimeout(() => {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        alert.style.transition = 'opacity 0.5s ease';
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 500);
+    });
+}, 5000);
+
+// Close modal on escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        hideForgotModal();
+    }
+});
+
+// Close modal when clicking outside
+document.getElementById('forgotModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideForgotModal();
+    }
+});
+</script>
+{% endblock %}

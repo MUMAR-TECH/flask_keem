@@ -1,0 +1,553 @@
+{% extends "base.html" %}
+
+{% block title %}Register for Student Portal - KEEM Driving School{% endblock %}
+
+{% block extra_css %}
+<style>
+    .registration-container {
+        min-height: calc(100vh - 400px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+    
+    .registration-box {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .step-indicator:before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e5e7eb;
+        z-index: 1;
+    }
+    
+    .step {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        width: 60px;
+    }
+    
+    .step-number {
+        width: 30px;
+        height: 30px;
+        background: #e5e7eb;
+        color: #6b7280;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin: 0 auto 0.5rem;
+    }
+    
+    .step.active .step-number {
+        background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+        color: white;
+    }
+    
+    .step.completed .step-number {
+        background: #10b981;
+        color: white;
+    }
+    
+    .step-label {
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+    
+    .step.active .step-label {
+        color: #dc2626;
+        font-weight: 600;
+    }
+    
+    .step-content {
+        display: none;
+    }
+    
+    .step-content.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+    }
+    
+    .verification-info {
+        background: #f0f9ff;
+        border: 1px solid #bae6fd;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .verification-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+    
+    .verification-item i {
+        width: 24px;
+        color: #3b82f6;
+    }
+    
+    .input-with-icon {
+        position: relative;
+    }
+    
+    .input-with-icon input {
+        padding-left: 3rem;
+    }
+    
+    .input-with-icon i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6b7280;
+    }
+    
+    .requirements-list {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+    
+    .requirements-list li {
+        margin-bottom: 0.25rem;
+        padding-left: 1.5rem;
+        position: relative;
+    }
+    
+    .requirements-list li:before {
+        content: '•';
+        position: absolute;
+        left: 0.5rem;
+        color: #dc2626;
+    }
+    
+    .success-message {
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        background: #10b981;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+    
+    .access-code-display {
+        background: #f8fafc;
+        border: 2px dashed #cbd5e1;
+        border-radius: 10px;
+        padding: 1.5rem;
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+    
+    .access-code {
+        font-family: monospace;
+        font-size: 1.5rem;
+        font-weight: bold;
+        letter-spacing: 0.25rem;
+        color: #dc2626;
+        margin: 1rem 0;
+        padding: 0.5rem;
+        background: white;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="registration-container">
+            <div class="registration-box animate-fade-in">
+                <!-- Header -->
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl font-bold gradient-text mb-2">Student Portal Registration</h1>
+                    <p class="text-gray-600">Create your portal access in a few simple steps</p>
+                </div>
+                
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step active" id="step1">
+                        <div class="step-number">1</div>
+                        <div class="step-label">Verification</div>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-number">2</div>
+                        <div class="step-label">Create Access</div>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-number">3</div>
+                        <div class="step-label">Complete</div>
+                    </div>
+                </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="mb-6 p-4 rounded-lg {% if category == 'error' %}bg-red-100 text-red-800 border-l-4 border-red-500{% else %}bg-green-100 text-green-800 border-l-4 border-green-500{% endif %}">
+                                <div class="flex items-center">
+                                    <i class="fas {% if category == 'error' %}fa-exclamation-circle{% else %}fa-check-circle{% endif %} mr-3"></i>
+                                    <span>{{ message }}</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <!-- Step 1: Verification -->
+                <div id="step1-content" class="step-content active">
+                    <div class="verification-info mb-6">
+                        <h3 class="font-bold text-gray-800 mb-3">Verification Required</h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            To create portal access, we need to verify your identity as a KEEM Driving School student.
+                        </p>
+                        <div class="space-y-2">
+                            <div class="verification-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span class="text-sm text-gray-700 ml-2">You must be an enrolled student</span>
+                            </div>
+                            <div class="verification-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span class="text-sm text-gray-700 ml-2">Information must match our records</span>
+                            </div>
+                            <div class="verification-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span class="text-sm text-gray-700 ml-2">Verification is instant</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <form id="verificationForm" class="space-y-4">
+                        <div class="input-with-icon">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" id="student_number" placeholder="Student Number (e.g., STU-20240001)" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-red-600">
+                        </div>
+                        
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" placeholder="Email Address" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-red-600">
+                        </div>
+                        
+                        <div class="input-with-icon">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="phone" placeholder="Phone Number" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-red-600">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                            <input type="date" id="date_of_birth" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-red-600">
+                        </div>
+                        
+                        <div class="requirements-list mt-6">
+                            <p class="font-medium text-gray-700 mb-2">Requirements:</p>
+                            <ul>
+                                <li>You must be an enrolled student at KEEM Driving School</li>
+                                <li>Information must match your application records</li>
+                                <li>You must use the email/phone from your application</li>
+                                <li>Date of birth must match our records exactly</li>
+                            </ul>
+                        </div>
+                        
+                        <button type="button" onclick="verifyStudent()" class="w-full gradient-bg text-white py-3 rounded-lg font-bold text-lg hover:opacity-90 transition mt-6">
+                            <i class="fas fa-search mr-2"></i> Verify Identity
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-6">
+                        <p class="text-sm text-gray-600">
+                            Already have portal access? 
+                            <a href="/student-portal/login" class="text-red-600 hover:text-red-700 font-medium">Login here</a>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Create Access -->
+                <div id="step2-content" class="step-content">
+                    <div class="verification-info mb-6">
+                        <div class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 text-xl mr-3 mt-1"></i>
+                            <div>
+                                <h3 class="font-bold text-gray-800 mb-2">Identity Verified!</h3>
+                                <p class="text-sm text-gray-600">
+                                    Welcome back, <span id="verifiedName" class="font-medium"></span>! 
+                                    Your identity has been verified successfully.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 mb-4">Portal Access Details</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <span class="text-gray-700">Student Number:</span>
+                                <span class="font-medium" id="displayStudentNumber"></span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <span class="text-gray-700">Course:</span>
+                                <span class="font-medium" id="displayCourse"></span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                                <span class="text-gray-700">Branch:</span>
+                                <span class="font-medium" id="displayBranch"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="font-bold text-gray-800 mb-4">Terms & Conditions</h3>
+                        <div class="bg-gray-50 p-4 rounded-lg max-h-40 overflow-y-auto mb-4">
+                            <div class="text-sm text-gray-600 space-y-2">
+                                <p>1. You are responsible for keeping your access code secure and confidential.</p>
+                                <p>2. Never share your access code with anyone, including KEEM staff.</p>
+                                <p>3. Report any unauthorized access immediately.</p>
+                                <p>4. Use the portal for authorized educational purposes only.</p>
+                                <p>5. KEEM reserves the right to suspend portal access for violations.</p>
+                                <p>6. You agree to receive portal notifications via email and SMS.</p>
+                            </div>
+                        </div>
+                        
+                        <label class="flex items-start">
+                            <input type="checkbox" id="termsAgreement" class="mt-1 mr-3" required>
+                            <span class="text-sm text-gray-600">
+                                I agree to the Terms and Conditions and confirm that I will keep my access code secure.
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <div class="flex gap-3">
+                        <button type="button" onclick="backToStep1()" class="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-50 transition">
+                            <i class="fas fa-arrow-left mr-2"></i> Back
+                        </button>
+                        <button type="button" onclick="createPortalAccess()" id="createAccessBtn" class="flex-1 gradient-bg text-white py-3 rounded-lg font-bold hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed">
+                            <i class="fas fa-key mr-2"></i> Create Access
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Complete -->
+                <div id="step3-content" class="step-content">
+                    <div class="success-message">
+                        <div class="success-icon">
+                            <i class="fas fa-check text-white text-3xl"></i>
+                        </div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4">Access Created Successfully!</h3>
+                        
+                        <div class="access-code-display">
+                            <p class="text-sm text-gray-600 mb-2">Your portal access code:</p>
+                            <div class="access-code" id="generatedCode">ABC123XY</div>
+                            <p class="text-xs text-gray-500">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                Save this code securely!
+                            </p>
+                        </div>
+                        
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-6">
+                            <div class="flex">
+                                <i class="fas fa-info-circle text-blue-500 text-xl mr-3 mt-1"></i>
+                                <div>
+                                    <p class="font-medium text-blue-800">Important Information</p>
+                                    <ul class="text-sm text-blue-700 mt-2 space-y-1">
+                                        <li>Access code has been sent to your email and phone</li>
+                                        <li>You can now login to the portal</li>
+                                        <li>Change your access code regularly for security</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-3">
+                            <a href="/student-portal/login" class="block w-full gradient-bg text-white py-3 rounded-lg font-bold hover:opacity-90 transition">
+                                <i class="fas fa-sign-in-alt mr-2"></i> Login to Portal
+                            </a>
+                            <a href="/student-portal/home" class="block w-full border border-gray-300 text-gray-700 py-3 rounded-lg font-bold hover:bg-gray-50 transition">
+                                <i class="fas fa-home mr-2"></i> Return to Portal Home
+                            </a>
+                        </div>
+                        
+                        <div class="mt-6 text-sm text-gray-500">
+                            <p><i class="fas fa-envelope mr-2"></i> Check your email for full access details</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="loadingState" class="text-center py-8 hidden">
+                    <div class="spinner border-4 border-red-600 border-t-transparent w-16 h-16 rounded-full animate-spin mx-auto mb-4"></div>
+                    <p class="text-gray-600" id="loadingMessage">Verifying your information...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+let currentStep = 1;
+let studentData = null;
+
+function updateStepIndicator() {
+    // Update all steps
+    for (let i = 1; i <= 3; i++) {
+        const step = document.getElementById(`step${i}`);
+        if (i < currentStep) {
+            step.classList.add('completed');
+            step.classList.remove('active');
+        } else if (i === currentStep) {
+            step.classList.add('active');
+            step.classList.remove('completed');
+        } else {
+            step.classList.remove('active', 'completed');
+        }
+    }
+    
+    // Show/hide content
+    for (let i = 1; i <= 3; i++) {
+        const content = document.getElementById(`step${i}-content`);
+        if (i === currentStep) {
+            content.classList.add('active');
+        } else {
+            content.classList.remove('active');
+        }
+    }
+}
+
+function showLoading(message) {
+    document.getElementById('loadingState').classList.remove('hidden');
+    document.getElementById('loadingMessage').textContent = message;
+    // Hide all step contents
+    for (let i = 1; i <= 3; i++) {
+        document.getElementById(`step${i}-content`).classList.remove('active');
+    }
+}
+
+function hideLoading() {
+    document.getElementById('loadingState').classList.add('hidden');
+    updateStepIndicator();
+}
+
+async function verifyStudent() {
+    const studentNumber = document.getElementById('student_number').value;
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+    const dateOfBirth = document.getElementById('date_of_birth').value;
+    
+    if (!studentNumber || !email || !phone || !dateOfBirth) {
+        alert('Please fill in all fields');
+        return;
+    }
+    
+    showLoading('Verifying your identity...');
+    
+    // Simulate API call - In real app, this would be a fetch request
+    setTimeout(() => {
+        // Mock response - in real app, this would come from the server
+        studentData = {
+            name: 'John Mwansa',
+            studentNumber: studentNumber,
+            course: 'Class B - Light Vehicle License',
+            branch: 'Luanshya Branch',
+            status: 'active'
+        };
+        
+        // Update step 2 content with verified data
+        document.getElementById('verifiedName').textContent = studentData.name;
+        document.getElementById('displayStudentNumber').textContent = studentData.studentNumber;
+        document.getElementById('displayCourse').textContent = studentData.course;
+        document.getElementById('displayBranch').textContent = studentData.branch;
+        
+        currentStep = 2;
+        hideLoading();
+        
+        // Enable terms agreement monitoring
+        document.getElementById('termsAgreement').addEventListener('change', function() {
+            document.getElementById('createAccessBtn').disabled = !this.checked;
+        });
+    }, 1500);
+}
+
+function backToStep1() {
+    currentStep = 1;
+    updateStepIndicator();
+}
+
+async function createPortalAccess() {
+    if (!document.getElementById('termsAgreement').checked) {
+        alert('Please agree to the Terms and Conditions');
+        return;
+    }
+    
+    showLoading('Creating your portal access...');
+    
+    // Simulate API call
+    setTimeout(() => {
+        // Generate mock access code
+        const accessCode = generateAccessCode();
+        document.getElementById('generatedCode').textContent = accessCode;
+        
+        currentStep = 3;
+        hideLoading();
+        
+        // In real app, here you would make a fetch request to create the access
+        console.log('Portal access created:', { studentData, accessCode });
+    }, 2000);
+}
+
+function generateAccessCode() {
+    // Generate a code like: ABC123XY
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    
+    let code = '';
+    for (let i = 0; i < 4; i++) {
+        code += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    for (let i = 0; i < 3; i++) {
+        code += numbers.charAt(Math.floor(Math.random() * numbers.length));
+    }
+    code += letters.charAt(Math.floor(Math.random() * letters.length));
+    
+    return code;
+}
+
+// Auto-hide flash messages
+setTimeout(() => {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        alert.style.transition = 'opacity 0.5s ease';
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 500);
+    });
+}, 5000);
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    updateStepIndicator();
+});
+</script>
+{% endblock %}

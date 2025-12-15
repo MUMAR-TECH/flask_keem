@@ -1,0 +1,270 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Applications - KEEM Admin{% endblock %}
+{% block page_title %}Applications Management{% endblock %}
+{% block page_description %}Review and manage all driving course applications{% endblock %}
+
+{% block content %}
+<div class="p-6">
+    <!-- Filters and Actions -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+            <div class="flex flex-wrap gap-4 items-center">
+                <div class="relative">
+                    <select id="statusFilter" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-200">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <select id="branchFilter" class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-200">
+                        <option value="all">All Branches</option>
+                        <option value="luanshya">Luanshya</option>
+                        <option value="mufulira">Mufulira</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <input type="date" id="dateFilter" class="bg-white border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-200">
+                </div>
+            </div>
+            
+            <div class="flex gap-3">
+                <a href="/admin/export/applications/excel" class="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+                    <i class="fas fa-file-excel"></i>
+                    Export Excel
+                </a>
+                <button onclick="printApplications()" class="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+                    <i class="fas fa-print"></i>
+                    Print
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Applications Table -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <input type="checkbox" id="selectAll" class="rounded border-gray-300 text-red-600 focus:ring-red-500">
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applicant</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for app in applications %}
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <input type="checkbox" class="row-checkbox rounded border-gray-300 text-red-600 focus:ring-red-500">
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">#{{ app.id }}</div>
+                            <div class="text-xs text-gray-500">{{ app.application_number }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                {% if app.profile_photo %}
+                                <img class="h-10 w-10 rounded-full object-cover mr-3" src="/static/uploads/{{ app.profile_photo }}" alt="{{ app.first_name }}">
+                                {% else %}
+                                <div class="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center mr-3">
+                                    <i class="fas fa-user text-red-600"></i>
+                                </div>
+                                {% endif %}
+                                <div>
+                                    <div class="text-sm font-medium text-gray-900">{{ app.first_name }} {{ app.last_name }}</div>
+                                    <div class="text-xs text-gray-500">{{ app.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ app.course.name if app.course else 'N/A' }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded-full">
+                                {{ app.branch.name if app.branch else 'N/A' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {% if app.status == 'pending' %}
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800 animate-pulse">
+                                <i class="fas fa-clock mr-1"></i> Pending
+                            </span>
+                            {% elif app.status == 'accepted' %}
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                <i class="fas fa-check-circle mr-1"></i> Accepted
+                            </span>
+                            {% elif app.status == 'rejected' %}
+                            <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                                <i class="fas fa-times-circle mr-1"></i> Rejected
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ app.created_at.strftime('%d %b %Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex space-x-2">
+                                <a href="/admin/application/{{ app.id }}" class="text-red-600 hover:text-red-900 transition" title="View">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="/admin/export/pdf/{{ app.id }}" class="text-green-600 hover:text-green-900 transition" title="Download PDF">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
+                                {% if app.status == 'pending' %}
+                                <a href="/admin/application/{{ app.id }}/accept" class="text-blue-600 hover:text-blue-900 transition" title="Accept">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                <a href="/admin/application/{{ app.id }}/reject" class="text-gray-600 hover:text-gray-900 transition" title="Reject">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="bg-gray-50 px-6 py-3 border-t border-gray-200">
+            <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                    Showing <span class="font-medium">1</span> to <span class="font-medium">{{ applications|length }}</span> of <span class="font-medium">{{ applications|length }}</span> applications
+                </div>
+                <div class="flex space-x-2">
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50" disabled>
+                        Previous
+                    </button>
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50">
+                        1
+                    </button>
+                    <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-700 hover:bg-gray-50">
+                        Next
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bulk Actions -->
+    <div class="mt-6 p-4 bg-gray-50 rounded-lg hidden" id="bulkActions">
+        <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-700">
+                <span id="selectedCount">0</span> applications selected
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="bulkAccept()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition flex items-center gap-2">
+                    <i class="fas fa-check"></i> Accept Selected
+                </button>
+                <button onclick="bulkReject()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2">
+                    <i class="fas fa-times"></i> Reject Selected
+                </button>
+                <button onclick="clearSelection()" class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition">
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.row-checkbox');
+    const bulkActions = document.getElementById('bulkActions');
+    const selectedCount = document.getElementById('selectedCount');
+    
+    // Select all functionality
+    selectAll.addEventListener('change', function() {
+        checkboxes.forEach(cb => {
+            cb.checked = this.checked;
+        });
+        updateBulkActions();
+    });
+    
+    // Individual checkbox functionality
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateBulkActions);
+    });
+    
+    // Update bulk actions
+    function updateBulkActions() {
+        const checked = document.querySelectorAll('.row-checkbox:checked');
+        const count = checked.length;
+        
+        selectedCount.textContent = count;
+        
+        if (count > 0) {
+            bulkActions.classList.remove('hidden');
+        } else {
+            bulkActions.classList.add('hidden');
+        }
+        
+        // Update select all checkbox
+        selectAll.checked = count === checkboxes.length;
+        selectAll.indeterminate = count > 0 && count < checkboxes.length;
+    }
+    
+    // Filter functionality
+    const statusFilter = document.getElementById('statusFilter');
+    const branchFilter = document.getElementById('branchFilter');
+    const dateFilter = document.getElementById('dateFilter');
+    
+    [statusFilter, branchFilter, dateFilter].forEach(filter => {
+        filter.addEventListener('change', applyFilters);
+    });
+    
+    function applyFilters() {
+        // This would normally make an AJAX call to filter applications
+        console.log('Applying filters:', {
+            status: statusFilter.value,
+            branch: branchFilter.value,
+            date: dateFilter.value
+        });
+    }
+    
+    function bulkAccept() {
+        if (confirm('Are you sure you want to accept all selected applications?')) {
+            // Implement bulk accept logic
+            console.log('Accepting selected applications');
+        }
+    }
+    
+    function bulkReject() {
+        if (confirm('Are you sure you want to reject all selected applications?')) {
+            // Implement bulk reject logic
+            console.log('Rejecting selected applications');
+        }
+    }
+    
+    function clearSelection() {
+        checkboxes.forEach(cb => cb.checked = false);
+        selectAll.checked = false;
+        updateBulkActions();
+    }
+    
+    function printApplications() {
+        window.print();
+    }
+});
+</script>
+{% endblock %}
